@@ -1,0 +1,59 @@
+.footer {
+  background: #0e1520;
+  padding: 64px 0 40px;
+}
+
+.footer__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.footer__logo {
+  height: 48px;
+  object-fit: contain;
+  /* On dark bg, make the logo white */
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+.footer__tagline {
+  font-size: 14px;
+  color: rgba(255,255,255,0.45);
+  font-style: italic;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.footer__nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px 36px;
+}
+
+.footer__nav a {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: color 0.2s;
+}
+
+.footer__nav a:hover {
+  color: var(--color-secondary);
+  opacity: 1;
+}
+
+.footer__copy {
+  font-size: 12px;
+  color: rgba(255,255,255,0.2);
+  margin: 24px 0 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 24px;
+  width: 100%;
+  text-align: center;
+}
