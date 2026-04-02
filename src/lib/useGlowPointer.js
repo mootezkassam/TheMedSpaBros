@@ -1,86 +1,94 @@
 /**
- * Global spotlight pointer tracker + per-card fade management.
+ * Spotlight glow pointer tracker.
  *
- * Two separate jobs:
- *   1. Track the global mouse position as CSS vars on :root so
- *      every [data-glow] card sees the same cursor coordinates.
+ * Uses LOCAL card coordinates (mouse pos relative to each card's bounding box)
+ * instead of global viewport coords + background-attachment:fixed.
  *
- *   2. For each [data-glow] card, manage a CSS class "glow-active"
- *      that drives opacity transitions.
- *      - mouseenter  → add "glow-active" immediately (fast fade IN)
- *      - mouseleave  → remove "glow-active" after FADE_OUT_MS delay
- *        so the glow lingers longer before disappearing.
+ * This avoids the "wrong corner lights up" bug that occurs when:
+ *   - background-attachment:fixed maps coords in viewport space
+ *   - the gradient can bleed into unexpected card edges when the
+ *     cursor exits fast and the last coord is far outside the card
  *
- * WHY JS instead of CSS :hover?
- *   CSS removes :hover immediately when the pointer leaves, which
- *   collapses pseudo-element transitions instantly. JS lets us delay
- *   the class removal so the CSS transition actually plays through.
+ * Strategy:
+ *   - pointermove → set --card-x / --card-y on EVERY [data-glow] card
+ *     (each card gets the mouse position relative to its own origin)
+ *   - mouseenter → add .glow-active immediately (fast fade IN)
+ *   - mouseleave → remove .glow-active after FADE_MS (so CSS transition plays)
  */
 
-const FADE_OUT_MS = 700; // how long the glow lingers after mouse leaves
+const FADE_MS = 100; // ms the glow lingers after mouse leaves
 
 export function initGlowPointer() {
-  const root = document.documentElement;
+  // Live set of all [data-glow] cards on the page
+  const cards = new Set();
 
-  // ── 1. Global pointer coordinates ────────────────────────
-  const syncCoords = (e) => {
-    root.style.setProperty('--glow-x',  e.clientX + 'px');
-    root.style.setProperty('--glow-y',  e.clientY + 'px');
-    root.style.setProperty('--glow-xp', (e.clientX / window.innerWidth).toFixed(4));
-    root.style.setProperty('--glow-yp', (e.clientY / window.innerHeight).toFixed(4));
+  const register = (el) => {
+    if (el.matches('[data-glow]')) cards.add(el);
+    el.querySelectorAll('[data-glow]').forEach((c) => cards.add(c));
   };
-  document.addEventListener('pointermove', syncCoords, { passive: true });
 
-  // ── 2. Per-card enter/leave with delayed fade-out ─────────
+  // Seed with cards already in DOM
+  register(document.body);
+
+  // Watch for React-mounted cards added later
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((m) =>
+      m.addedNodes.forEach((n) => {
+        if (n instanceof Element) register(n);
+      })
+    );
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // ── Per-card local coordinates on every move ──────────────────
   const leaveTimers = new WeakMap();
 
-  const onEnter = (e) => {
-    const card = e.currentTarget;
-    // Cancel any pending fade-out on this card
-    const pending = leaveTimers.get(card);
+  const onMove = (e) => {
+    cards.forEach((card) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--card-x', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--card-y', (e.clientY - r.top)  + 'px');
+    });
+  };
+
+  // ── Enter: show glow immediately ──────────────────────────────
+  const onEnter = function () {
+    const pending = leaveTimers.get(this);
     if (pending) clearTimeout(pending);
-    card.classList.add('glow-active');
+    this.classList.add('glow-active');
   };
 
-  const onLeave = (e) => {
-    const card = e.currentTarget;
-    // Delay the class removal so the CSS transition finishes
-    const t = setTimeout(() => {
-      card.classList.remove('glow-active');
-    }, FADE_OUT_MS);
-    leaveTimers.set(card, t);
+  // ── Leave: hold then remove ───────────────────────────────────
+  const onLeave = function () {
+    const t = setTimeout(() => this.classList.remove('glow-active'), FADE_MS);
+    leaveTimers.set(this, t);
   };
 
-  // Attach to existing cards, plus watch for future ones (React mounts async)
-  const attachTo = (card) => {
+  const attach = (card) => {
     card.addEventListener('mouseenter', onEnter);
     card.addEventListener('mouseleave', onLeave);
   };
 
-  const detachFrom = (card) => {
-    card.removeEventListener('mouseenter', onEnter);
-    card.removeEventListener('mouseleave', onLeave);
-  };
+  cards.forEach(attach);
 
-  // Handle cards already in the DOM
-  document.querySelectorAll('[data-glow]').forEach(attachTo);
-
-  // Handle cards added later (React hydration / lazy mounts)
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((m) => {
-      m.addedNodes.forEach((node) => {
-        if (!(node instanceof Element)) return;
-        if (node.matches('[data-glow]')) attachTo(node);
-        node.querySelectorAll('[data-glow]').forEach(attachTo);
-      });
-    });
+  // Attach to any card added after the initial seed
+  const origObserverCallback = observer.takeRecords; // keep reference
+  const attachObserver = new MutationObserver((mutations) => {
+    mutations.forEach((m) =>
+      m.addedNodes.forEach((n) => {
+        if (!(n instanceof Element)) return;
+        if (n.matches('[data-glow]')) { cards.add(n); attach(n); }
+        n.querySelectorAll('[data-glow]').forEach((c) => { cards.add(c); attach(c); });
+      })
+    );
   });
-  observer.observe(document.body, { childList: true, subtree: true });
+  attachObserver.observe(document.body, { childList: true, subtree: true });
 
-  // Cleanup function (called if needed)
+  document.addEventListener('pointermove', onMove, { passive: true });
+
   return () => {
-    document.removeEventListener('pointermove', syncCoords);
-    document.querySelectorAll('[data-glow]').forEach(detachFrom);
+    document.removeEventListener('pointermove', onMove);
     observer.disconnect();
+    attachObserver.disconnect();
   };
 }

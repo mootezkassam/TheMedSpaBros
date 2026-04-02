@@ -1,34 +1,25 @@
 /*
  * ═══════════════════════════════════════════════════════
  *  SPOTLIGHT GLOW CARD  —  data-glow attribute system
- *  Hue: 220 (electric blue, #2563EB)
- *  
- *  Strategy: ONLY use pseudo-elements for the glow effect.
- *  We do NOT touch background-image on the card itself,
- *  so existing card backgrounds (white, navy, etc.) are untouched.
- *  The border glow lives entirely in ::before / ::after.
+ *  Electric blue (#2563EB, hue 220)
+ *
+ *  Uses LOCAL card coordinates (--card-x, --card-y) set by
+ *  useGlowPointer.js relative to each card's bounding box.
+ *  NO background-attachment:fixed → no corner-bleed artifacts.
  * ═══════════════════════════════════════════════════════
  */
 
-:root {
-  --glow-hue:    220;
-  --glow-spread: 60;
-  --glow-x:      0px;
-  --glow-y:      0px;
-  --glow-xp:     0.5;
-  --glow-yp:     0.5;
-}
-
-/* ── Card container — only sets CSS vars + position ── */
+/* ── Card container ───────────────────────────────────── */
 [data-glow] {
   position: relative;
-  /* Compute hue from horizontal cursor position */
-  --_hue: calc(var(--glow-hue) + (var(--glow-xp) * var(--glow-spread)));
   --_bsize: 2px;
-  --_r: 14px;
+  --_r:     14px;
+  /* Default coords off-screen so glow never shows before hover */
+  --card-x: -999px;
+  --card-y: -999px;
 }
 
-/* ── Border glow overlay (::before = colour seam, ::after = white glint) ── */
+/* ── Pseudo-elements: border seam + white glint ────────── */
 [data-glow]::before,
 [data-glow]::after {
   pointer-events: none;
@@ -37,115 +28,85 @@
   inset: calc(var(--_bsize) * -1);
   border: var(--_bsize) solid transparent;
   border-radius: var(--_r);
-  background-attachment: fixed;
-  background-size: 200% 200%;
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  /* Only paint on the border strip, not on the card face */
+  /* Local coordinate gradient — no viewport-relative tricks */
+  background-repeat:   no-repeat;
+  background-position: 0 0;
+  background-size:     100% 100%;
+  /* Only paint on the border strip (not the card face) */
   mask:
     linear-gradient(transparent, transparent),
     linear-gradient(white, white);
   mask-clip:      padding-box, border-box;
   mask-composite: intersect;
   z-index: 2;
+  /* Start invisible; JS class drives fade in/out */
   opacity: 0;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.1s ease;
 }
 
-/* Fade IN quickly when JS adds .glow-active */
+/* Fade IN when JS adds .glow-active (fast) */
 [data-glow].glow-active::before,
 [data-glow].glow-active::after {
   opacity: 1;
-  transition: opacity 0.12s ease;
+  transition: opacity 0.08s ease;
 }
 
-/* Blue border seam — tracks cursor */
+/* ── Blue border seam (tracks cursor) ─────────────────── */
 [data-glow]::before {
   background-image: radial-gradient(
-    320px 320px at var(--glow-x) var(--glow-y),
-    hsl(var(--_hue) 100% 58% / var(--_border-opacity, 0.8)),
+    300px 300px at var(--card-x) var(--card-y),
+    hsl(220 100% 60% / 0.9),
     transparent 100%
   );
-  filter: brightness(1.6);
+  filter: brightness(1.5);
 }
 
-/* White glint over the blue seam */
+/* ── White glint over the blue seam ───────────────────── */
 [data-glow]::after {
   background-image: radial-gradient(
-    200px 200px at var(--glow-x) var(--glow-y),
-    hsl(0 0% 100% / var(--_glint-opacity, 0.35)),
-    transparent 100%
-  );
-}
-
-/* Subtle box-shadow lift on light cards */
-[data-glow].glow-active {
-  box-shadow:
-    0 0 0 1px hsl(220 100% 60% / 0.15),
-    0 8px 32px hsl(220 100% 40% / 0.12);
-  transition: box-shadow 0.12s ease;
-}
-
-[data-glow]:not(.glow-active) {
-  box-shadow: none;
-  transition: box-shadow 0.7s ease;
-}
-
-/* ── Variant: light cards (white/grey bg) ── */
-[data-glow="light"] {
-  --_border-opacity: 0.75;
-  --_glint-opacity:  0.35;
-}
-
-[data-glow="light"]::before {
-  background-image: radial-gradient(
-    300px 300px at var(--glow-x) var(--glow-y),
-    hsl(220 100% 55% / 0.75),
-    transparent 100%
-  );
-}
-
-[data-glow="light"]::after {
-  background-image: radial-gradient(
-    180px 180px at var(--glow-x) var(--glow-y),
+    180px 180px at var(--card-x) var(--card-y),
     hsl(0 0% 100% / 0.4),
     transparent 100%
   );
 }
 
-/* ── Variant: dark cards (navy bg) ── */
-[data-glow="dark"] {
-  --_border-opacity: 1.0;
-  --_glint-opacity:  0.45;
+/* ── Box-shadow lift ───────────────────────────────────── */
+[data-glow].glow-active {
+  box-shadow:
+    0 0 0 1px hsl(220 100% 60% / 0.15),
+    0 8px 32px hsl(220 100% 40% / 0.10);
+  transition: box-shadow 0.08s ease;
+}
+[data-glow]:not(.glow-active) {
+  box-shadow: none;
+  transition: box-shadow 0.1s ease;
 }
 
+/* ── Variant: dark cards (navy bg) ────────────────────── */
 [data-glow="dark"]::before {
   background-image: radial-gradient(
-    380px 380px at var(--glow-x) var(--glow-y),
-    hsl(220 100% 62% / 0.95),
+    360px 360px at var(--card-x) var(--card-y),
+    hsl(220 100% 65% / 1.0),
     transparent 100%
   );
   filter: brightness(2);
 }
-
 [data-glow="dark"]::after {
   background-image: radial-gradient(
-    240px 240px at var(--glow-x) var(--glow-y),
+    220px 220px at var(--card-x) var(--card-y),
     hsl(0 0% 100% / 0.5),
     transparent 100%
   );
 }
-
-/* Dark card extra glow when active */
 [data-glow="dark"].glow-active {
   box-shadow:
     0 0 0 1px hsl(220 100% 65% / 0.25),
-    0 12px 40px hsl(220 100% 35% / 0.25),
+    0 12px 40px hsl(220 100% 35% / 0.20),
     inset 0 0 60px hsl(220 100% 60% / 0.04);
-  transition: box-shadow 0.12s ease;
+  transition: box-shadow 0.08s ease;
 }
 
-/* Ensure card content sits above the glow pseudo-elements */
+/* ── Keep card content above glow pseudo-elements ─────── */
 [data-glow] > * {
   position: relative;
   z-index: 1;
