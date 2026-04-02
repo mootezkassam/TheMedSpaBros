@@ -1,0 +1,143 @@
+/*
+ * ═══════════════════════════════════════════════════════
+ *  SPOTLIGHT GLOW CARD  —  data-glow attribute system
+ *  Hue: 220 (electric blue, #2563EB)
+ *  
+ *  Strategy: ONLY use pseudo-elements for the glow effect.
+ *  We do NOT touch background-image on the card itself,
+ *  so existing card backgrounds (white, navy, etc.) are untouched.
+ *  The border glow lives entirely in ::before / ::after.
+ * ═══════════════════════════════════════════════════════
+ */
+
+:root {
+  --glow-hue:    220;
+  --glow-spread: 60;
+  --glow-x:      0px;
+  --glow-y:      0px;
+  --glow-xp:     0.5;
+  --glow-yp:     0.5;
+}
+
+/* ── Card container — only sets CSS vars + position ── */
+[data-glow] {
+  position: relative;
+  /* Compute hue from horizontal cursor position */
+  --_hue: calc(var(--glow-hue) + (var(--glow-xp) * var(--glow-spread)));
+  --_bsize: 2px;
+  --_r: 14px;
+}
+
+/* ── Border glow overlay (::before = colour seam, ::after = white glint) ── */
+[data-glow]::before,
+[data-glow]::after {
+  pointer-events: none;
+  content: '';
+  position: absolute;
+  inset: calc(var(--_bsize) * -1);
+  border: var(--_bsize) solid transparent;
+  border-radius: var(--_r);
+  background-attachment: fixed;
+  background-size: 200% 200%;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  /* Only paint on the border strip, not on the card face */
+  mask:
+    linear-gradient(transparent, transparent),
+    linear-gradient(white, white);
+  mask-clip:      padding-box, border-box;
+  mask-composite: intersect;
+  z-index: 2;
+  transition: opacity 0.3s ease;
+}
+
+/* Blue border seam — tracks cursor */
+[data-glow]::before {
+  background-image: radial-gradient(
+    320px 320px at var(--glow-x) var(--glow-y),
+    hsl(var(--_hue) 100% 58% / var(--_border-opacity, 0.8)),
+    transparent 100%
+  );
+  filter: brightness(1.6);
+}
+
+/* White glint over the blue seam */
+[data-glow]::after {
+  background-image: radial-gradient(
+    200px 200px at var(--glow-x) var(--glow-y),
+    hsl(0 0% 100% / var(--_glint-opacity, 0.35)),
+    transparent 100%
+  );
+}
+
+/* ── Subtle spotlight fill on the card face (separate element) ──
+   We inject a zero-height sibling layer inside the card via
+   a child [data-glow-fill] element approach — but simpler:
+   use a ::before on a wrapper. Since we don't want to conflict,
+   we do this via box-shadow glow on hover instead.
+*/
+[data-glow]:hover {
+  box-shadow:
+    0 0 0 1px hsl(220 100% 60% / 0.15),
+    0 8px 32px hsl(220 100% 40% / 0.12);
+  transition: box-shadow 0.3s ease;
+}
+
+/* ── Variant: light cards (white/grey bg) ── */
+[data-glow="light"] {
+  --_border-opacity: 0.75;
+  --_glint-opacity:  0.35;
+}
+
+[data-glow="light"]::before {
+  background-image: radial-gradient(
+    300px 300px at var(--glow-x) var(--glow-y),
+    hsl(220 100% 55% / 0.75),
+    transparent 100%
+  );
+}
+
+[data-glow="light"]::after {
+  background-image: radial-gradient(
+    180px 180px at var(--glow-x) var(--glow-y),
+    hsl(0 0% 100% / 0.4),
+    transparent 100%
+  );
+}
+
+/* ── Variant: dark cards (navy bg) ── */
+[data-glow="dark"] {
+  --_border-opacity: 1.0;
+  --_glint-opacity:  0.45;
+}
+
+[data-glow="dark"]::before {
+  background-image: radial-gradient(
+    380px 380px at var(--glow-x) var(--glow-y),
+    hsl(220 100% 62% / 0.95),
+    transparent 100%
+  );
+  filter: brightness(2);
+}
+
+[data-glow="dark"]::after {
+  background-image: radial-gradient(
+    240px 240px at var(--glow-x) var(--glow-y),
+    hsl(0 0% 100% / 0.5),
+    transparent 100%
+  );
+}
+
+/* Dark card also gets a subtle inner face glow via box-shadow */
+[data-glow="dark"]:hover {
+  box-shadow:
+    0 0 0 1px hsl(220 100% 65% / 0.25),
+    0 12px 40px hsl(220 100% 35% / 0.25),
+    inset 0 0 60px hsl(220 100% 60% / 0.04);
+}
+
+/* Ensure card content sits above the glow pseudo-elements */
+[data-glow] > * {
+  position: relative;
+  z-index: 1;
+}

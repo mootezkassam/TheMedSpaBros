@@ -69,6 +69,7 @@ const WhyUs = () => {
         {/* Economics callout */}
         <motion.div
           className="why-us__economics"
+          data-glow="dark"
           variants={fadeUp}
           custom={6}
           initial="hidden"

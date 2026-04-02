@@ -155,6 +155,7 @@ const Contact = () => {
           {/* ── RIGHT BOOKING CARD ── */}
           <motion.div
             className="contact__booking-card"
+            data-glow="dark"
             initial={{ opacity: 0, x: 40 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.1 }}

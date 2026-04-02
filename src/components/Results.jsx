@@ -58,6 +58,7 @@ const Results = () => {
             <motion.div
               key={i}
               className="results__stat-card"
+              data-glow="light"
               initial={{ opacity: 0, y: 40 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.2 + i * 0.1 }}
@@ -77,6 +78,7 @@ const Results = () => {
             <motion.div
               key={i}
               className="results__testimonial"
+              data-glow="dark"
               initial={{ opacity: 0, y: 40 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.5 + i * 0.12 }}
