@@ -52,12 +52,11 @@
   transition: opacity 0.6s ease;
 }
 
-/* Fade the glow IN when the cursor is anywhere in the card vicinity.
-   We use :hover on the card to drive the transition */
-[data-glow]:hover::before,
-[data-glow]:hover::after {
+/* Fade IN quickly when JS adds .glow-active */
+[data-glow].glow-active::before,
+[data-glow].glow-active::after {
   opacity: 1;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.12s ease;
 }
 
 /* Blue border seam — tracks cursor */
@@ -79,17 +78,17 @@
   );
 }
 
-/* ── Subtle spotlight fill on the card face (separate element) ──
-   We inject a zero-height sibling layer inside the card via
-   a child [data-glow-fill] element approach — but simpler:
-   use a ::before on a wrapper. Since we don't want to conflict,
-   we do this via box-shadow glow on hover instead.
-*/
-[data-glow]:hover {
+/* Subtle box-shadow lift on light cards */
+[data-glow].glow-active {
   box-shadow:
     0 0 0 1px hsl(220 100% 60% / 0.15),
     0 8px 32px hsl(220 100% 40% / 0.12);
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.12s ease;
+}
+
+[data-glow]:not(.glow-active) {
+  box-shadow: none;
+  transition: box-shadow 0.7s ease;
 }
 
 /* ── Variant: light cards (white/grey bg) ── */
@@ -137,12 +136,13 @@
   );
 }
 
-/* Dark card also gets a subtle inner face glow via box-shadow */
-[data-glow="dark"]:hover {
+/* Dark card extra glow when active */
+[data-glow="dark"].glow-active {
   box-shadow:
     0 0 0 1px hsl(220 100% 65% / 0.25),
     0 12px 40px hsl(220 100% 35% / 0.25),
     inset 0 0 60px hsl(220 100% 60% / 0.04);
+  transition: box-shadow 0.12s ease;
 }
 
 /* Ensure card content sits above the glow pseudo-elements */
