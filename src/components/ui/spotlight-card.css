@@ -3,66 +3,76 @@
  *  SPOTLIGHT GLOW CARD  —  data-glow attribute system
  *  Electric blue (#2563EB, hue 220)
  *
- *  Uses LOCAL card coordinates (--card-x, --card-y) set by
- *  useGlowPointer.js relative to each card's bounding box.
- *  NO background-attachment:fixed → no corner-bleed artifacts.
+ *  The glow effect lives on .glow-ring (injected by useGlowPointer.js)
+ *  NOT on the card's own ::before/::after — so it never conflicts
+ *  with any existing card pseudo-elements (decorative circles, etc.)
  * ═══════════════════════════════════════════════════════
  */
 
 /* ── Card container ───────────────────────────────────── */
 [data-glow] {
   position: relative;
-  --_bsize: 2px;
-  --_r:     14px;
-  /* Default coords off-screen so glow never shows before hover */
   --card-x: -999px;
   --card-y: -999px;
 }
 
-/* ── Pseudo-elements: border seam + white glint ────────── */
-[data-glow]::before,
-[data-glow]::after {
+/* ── Injected ring element ─────────────────────────────
+   Sits as first child of the card, covering it fully.
+   Pointer-events: none so it never blocks clicks.
+   Overflow: visible so the border seam peeks outside the card edge.
+   z-index: 9999 ensures it paints above existing card pseudo-elements.
+─────────────────────────────────────────────────────── */
+.glow-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
   pointer-events: none;
+  z-index: 9999;
+  overflow: visible;
+}
+
+/* ── Border seam + glint pseudo-elements on the ring ── */
+.glow-ring::before,
+.glow-ring::after {
   content: '';
   position: absolute;
-  inset: calc(var(--_bsize) * -1);
-  border: var(--_bsize) solid transparent;
-  border-radius: var(--_r);
-  /* Local coordinate gradient — no viewport-relative tricks */
+  inset: -2px;                  /* overlap the card border by 2px */
+  border: 2px solid transparent;
+  border-radius: inherit;
   background-repeat:   no-repeat;
   background-position: 0 0;
   background-size:     100% 100%;
-  /* Only paint on the border strip (not the card face) */
+  /* Mask: only paint on the 2px border strip, never the card face */
   mask:
     linear-gradient(transparent, transparent),
     linear-gradient(white, white);
   mask-clip:      padding-box, border-box;
   mask-composite: intersect;
-  z-index: 2;
-  /* Start invisible; JS class drives fade in/out */
+  pointer-events: none;
+  /* Start invisible */
   opacity: 0;
   transition: opacity 0.1s ease;
 }
 
-/* Fade IN when JS adds .glow-active (fast) */
-[data-glow].glow-active::before,
-[data-glow].glow-active::after {
+/* Fade IN fast when .glow-active is on the parent card */
+[data-glow].glow-active .glow-ring::before,
+[data-glow].glow-active .glow-ring::after {
   opacity: 1;
   transition: opacity 0.08s ease;
 }
 
-/* ── Blue border seam (tracks cursor) ─────────────────── */
-[data-glow]::before {
+/* ── Blue seam (light variant default) ────────────────── */
+.glow-ring::before {
   background-image: radial-gradient(
     300px 300px at var(--card-x) var(--card-y),
-    hsl(220 100% 60% / 0.9),
+    hsl(220 100% 60% / 0.85),
     transparent 100%
   );
   filter: brightness(1.5);
 }
 
-/* ── White glint over the blue seam ───────────────────── */
-[data-glow]::after {
+/* ── White glint ───────────────────────────────────────── */
+.glow-ring::after {
   background-image: radial-gradient(
     180px 180px at var(--card-x) var(--card-y),
     hsl(0 0% 100% / 0.4),
@@ -70,7 +80,7 @@
   );
 }
 
-/* ── Box-shadow lift ───────────────────────────────────── */
+/* ── Box-shadow lift ────────────────────────────────────── */
 [data-glow].glow-active {
   box-shadow:
     0 0 0 1px hsl(220 100% 60% / 0.15),
@@ -82,8 +92,8 @@
   transition: box-shadow 0.1s ease;
 }
 
-/* ── Variant: dark cards (navy bg) ────────────────────── */
-[data-glow="dark"]::before {
+/* ── Dark card variant ──────────────────────────────────── */
+[data-glow="dark"] .glow-ring::before {
   background-image: radial-gradient(
     360px 360px at var(--card-x) var(--card-y),
     hsl(220 100% 65% / 1.0),
@@ -91,13 +101,15 @@
   );
   filter: brightness(2);
 }
-[data-glow="dark"]::after {
+
+[data-glow="dark"] .glow-ring::after {
   background-image: radial-gradient(
     220px 220px at var(--card-x) var(--card-y),
     hsl(0 0% 100% / 0.5),
     transparent 100%
   );
 }
+
 [data-glow="dark"].glow-active {
   box-shadow:
     0 0 0 1px hsl(220 100% 65% / 0.25),
@@ -106,8 +118,8 @@
   transition: box-shadow 0.08s ease;
 }
 
-/* ── Keep card content above glow pseudo-elements ─────── */
-[data-glow] > * {
+/* ── Card content stays above the ring ─────────────────── */
+[data-glow] > *:not(.glow-ring) {
   position: relative;
   z-index: 1;
 }
