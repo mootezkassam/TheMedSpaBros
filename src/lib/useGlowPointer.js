@@ -1,30 +1,22 @@
 /**
- * Spotlight glow pointer tracker.
+ * Spotlight glow — pointer tracker + .glow-ring injector
  *
- * INJECTION STRATEGY:
- *   Injects a <span class="glow-ring"> as the FIRST child of every [data-glow]
- *   card. The glow ::before / ::after live on THIS span, not on the card itself,
- *   so they can never conflict with the card's own existing pseudo-elements.
+ * 1. Injects <span class="glow-ring" aria-hidden="true"> into every [data-glow]
+ *    card so the border glow lives on a DEDICATED element whose ::before/::after
+ *    can never conflict with the card's own existing pseudo-elements.
  *
- *   The span is:
- *     - position: absolute; inset: 0 (covers full card face)
- *     - pointer-events: none (invisible to mouse)
- *     - z-index: 100 (above card content, but masked to border strip only)
+ * 2. On every pointermove, writes --card-x / --card-y as the mouse position
+ *    RELATIVE to each card's own top-left corner (not viewport coords).
+ *    This means moving outside a card pushes the gradient off its edge → no
+ *    corner bleed artifacts.
  *
- * COORDINATES:
- *   Uses LOCAL card coordinates (--card-x / --card-y relative to each card's
- *   bounding box) instead of viewport-space globals.
- *   This prevents the "wrong corner lights up" bug from background-attachment:fixed.
- *
- * FADE:
- *   - mouseenter → .glow-active added instantly (fast fade IN)
- *   - mouseleave → .glow-active removed after FADE_MS (CSS transition plays out)
+ * 3. mouseenter  → adds  .glow-active immediately   (fast fade IN)
+ *    mouseleave  → removes .glow-active after 100ms  (CSS transition plays out)
  */
 
 const FADE_MS = 100;
 
 function injectRing(card) {
-  // Avoid double-injecting
   if (card.querySelector(':scope > .glow-ring')) return;
   const ring = document.createElement('span');
   ring.className = 'glow-ring';
@@ -36,75 +28,50 @@ export function initGlowPointer() {
   const cards = new Set();
   const leaveTimers = new WeakMap();
 
-  const register = (el) => {
-    if (el.matches?.('[data-glow]')) {
-      cards.add(el);
-      injectRing(el);
-    }
-    el.querySelectorAll?.('[data-glow]').forEach((c) => {
-      cards.add(c);
-      injectRing(c);
+  /** Register a card: inject ring + attach listeners */
+  const register = (card) => {
+    if (cards.has(card)) return;
+    cards.add(card);
+    injectRing(card);
+
+    card.addEventListener('mouseenter', function () {
+      const t = leaveTimers.get(this);
+      if (t) clearTimeout(t);
+      this.classList.add('glow-active');
+    });
+
+    card.addEventListener('mouseleave', function () {
+      const el = this;
+      const t = setTimeout(() => el.classList.remove('glow-active'), FADE_MS);
+      leaveTimers.set(el, t);
     });
   };
 
-  // Seed existing cards
-  register(document.body);
+  /** Scan an element and its subtree for [data-glow] cards */
+  const scan = (root) => {
+    if (root.matches?.('[data-glow]')) register(root);
+    root.querySelectorAll?.('[data-glow]').forEach(register);
+  };
 
-  // Watch for React-mounted cards added later
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((m) =>
-      m.addedNodes.forEach((n) => {
-        if (n instanceof Element) register(n);
-      })
-    );
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
+  // Seed with cards already in DOM
+  scan(document.body);
 
-  // ── Per-card local coordinates ─────────────────────────────────
-  const onMove = (e) => {
+  // Watch for cards added later (React async renders)
+  const mo = new MutationObserver((mutations) =>
+    mutations.forEach((m) => m.addedNodes.forEach((n) => {
+      if (n instanceof Element) scan(n);
+    }))
+  );
+  mo.observe(document.body, { childList: true, subtree: true });
+
+  // Update local coords on every mouse move
+  document.addEventListener('pointermove', (e) => {
     cards.forEach((card) => {
       const r = card.getBoundingClientRect();
       card.style.setProperty('--card-x', (e.clientX - r.left) + 'px');
-      card.style.setProperty('--card-y', (e.clientY - r.top) + 'px');
+      card.style.setProperty('--card-y', (e.clientY - r.top)  + 'px');
     });
-  };
+  }, { passive: true });
 
-  // ── Enter: show glow immediately ───────────────────────────────
-  const onEnter = function () {
-    const pending = leaveTimers.get(this);
-    if (pending) clearTimeout(pending);
-    this.classList.add('glow-active');
-  };
-
-  // ── Leave: hold FADE_MS then remove ───────────────────────────
-  const onLeave = function () {
-    const t = setTimeout(() => this.classList.remove('glow-active'), FADE_MS);
-    leaveTimers.set(this, t);
-  };
-
-  const attach = (card) => {
-    card.addEventListener('mouseenter', onEnter);
-    card.addEventListener('mouseleave', onLeave);
-  };
-  cards.forEach(attach);
-
-  // Attach listeners to newly added cards
-  const attachObserver = new MutationObserver((mutations) => {
-    mutations.forEach((m) =>
-      m.addedNodes.forEach((n) => {
-        if (!(n instanceof Element)) return;
-        if (n.matches('[data-glow]')) { cards.add(n); injectRing(n); attach(n); }
-        n.querySelectorAll('[data-glow]').forEach((c) => { cards.add(c); injectRing(c); attach(c); });
-      })
-    );
-  });
-  attachObserver.observe(document.body, { childList: true, subtree: true });
-
-  document.addEventListener('pointermove', onMove, { passive: true });
-
-  return () => {
-    document.removeEventListener('pointermove', onMove);
-    observer.disconnect();
-    attachObserver.disconnect();
-  };
+  return () => mo.disconnect();
 }
