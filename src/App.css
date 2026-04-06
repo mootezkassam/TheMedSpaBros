@@ -1,8 +1,1 @@
-/* Consistent section padding override */
-.section-padding {
-  padding: 100px 0;
-}
-
-@media (max-width: 768px) {
-  .section-padding { padding: 64px 0; }
-}
+/* App-level styles — section-padding defined in index.css */

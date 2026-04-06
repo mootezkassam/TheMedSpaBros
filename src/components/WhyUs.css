@@ -47,15 +47,15 @@
   gap: 32px;
   align-items: start;
   padding: 40px 0;
+  padding-left: 24px;
   border-bottom: 1px solid rgba(0,0,0,0.07);
-  transition: background 0.25s;
+  border-left: 3px solid transparent;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .why-us__pillar:hover {
   background: var(--color-background);
-  margin: 0 -24px;
-  padding-left: 24px;
-  padding-right: 24px;
+  border-left-color: var(--color-secondary);
 }
 
 .why-us__pillar-num {
@@ -88,6 +88,32 @@
   background: var(--color-primary);
   border-radius: 16px;
   padding: 56px 64px;
+  position: relative;
+  overflow: hidden;
+}
+
+.why-us__economics::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 260px;
+  height: 260px;
+  background: rgba(37, 99, 235, 0.12);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.why-us__economics::after {
+  content: '';
+  position: absolute;
+  bottom: -60px;
+  left: -40px;
+  width: 180px;
+  height: 180px;
+  background: rgba(37, 99, 235, 0.08);
+  border-radius: 50%;
+  pointer-events: none;
 }
 
 .why-us__econ-label {
@@ -109,8 +135,13 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border-left: 1px solid rgba(255,255,255,0.1);
+  border-left: 2px solid rgba(255,255,255,0.12);
   padding-left: 24px;
+  transition: border-color 0.3s ease;
+}
+
+.why-us__econ-item:hover {
+  border-left-color: var(--color-secondary);
 }
 
 .why-us__econ-val {

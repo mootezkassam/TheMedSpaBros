@@ -14,7 +14,7 @@ const Footer = () => (
         <a href="#results">Results</a>
         <a href="#pricing">Pricing</a>
         <a href="#faq">FAQ</a>
-        <a href="#contact">Book Free Audit</a>
+        <a href="/book">Book Free Audit</a>
       </nav>
       <p className="footer__copy">
         © {new Date().getFullYear()} The Medspa Bros. All rights reserved.

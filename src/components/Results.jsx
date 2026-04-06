@@ -11,19 +11,19 @@ const stats = [
 
 const testimonials = [
   {
-    quote: '"We were spending $3K/month with our last agency and couldn\'t tell you where a single patient came from. The Medspa Bros took over our ads, and within 6 weeks we were booked out 2 weeks in advance. These guys are the real deal."',
+    quote: 'We were spending $3K/month with our last agency and couldn\'t tell you where a single patient came from. The Medspa Bros took over our ads, and within 6 weeks we were booked out 2 weeks in advance. These guys are the real deal.',
     name: 'Dr. Sarah M.',
     title: 'Medical Director, MedSpa',
     initials: 'SM',
   },
   {
-    quote: '"I\'ve worked with three agencies. All of them gave me vanity metrics and excuses. The Bros gave me a dashboard that shows exactly what every dollar generates. Last month: $4,100 in ad spend, $28K in booked revenue. I\'m done looking."',
+    quote: 'I\'ve worked with three agencies. All of them gave me vanity metrics and excuses. The Bros gave me a dashboard that shows exactly what every dollar generates. Last month: $4,100 in ad spend, $28K in booked revenue. I\'m done looking.',
     name: 'Jessica T.',
     title: 'Owner, Aesthetics & Wellness',
     initials: 'JT',
   },
   {
-    quote: '"They told me I\'d see leads within 48 hours. I thought it was BS. I got 11 leads on day one. Seven of them booked. One did a $3,200 CoolSculpting package. I was a believer by day three."',
+    quote: 'They told me I\'d see leads within 48 hours. I thought it was BS. I got 11 leads on day one. Seven of them booked. One did a $3,200 CoolSculpting package. I was a believer by day three.',
     name: 'Michael R.',
     title: 'Owner & NP, Med Spa',
     initials: 'MR',

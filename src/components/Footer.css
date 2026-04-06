@@ -1,6 +1,7 @@
 .footer {
-  background: #0e1520;
+  background: #0e1726;
   padding: 64px 0 40px;
+  border-top: 1px solid rgba(37, 99, 235, 0.1);
 }
 
 .footer__inner {
@@ -37,14 +38,15 @@
 .footer__nav a {
   font-size: 12px;
   font-weight: 600;
-  color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.4);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  transition: color 0.2s;
+  transition: color 0.25s ease;
+  padding: 4px 0;
 }
 
 .footer__nav a:hover {
-  color: var(--color-secondary);
+  color: rgba(255,255,255,0.85);
   opacity: 1;
 }
 

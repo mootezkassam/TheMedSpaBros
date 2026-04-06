@@ -1,4 +1,5 @@
 import React from 'react'
+import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Problem from './components/Problem'
@@ -7,11 +8,12 @@ import HowItWorks from './components/HowItWorks'
 import Results from './components/Results'
 import Pricing from './components/ui/pricing-section'
 import FAQ from './components/FAQ'
-import Contact from './components/Contact'
 import Footer from './components/Footer'
+import BookPage from './pages/BookPage'
+import ThankYouPage from './pages/ThankYouPage'
 import './App.css'
 
-function App() {
+function HomePage() {
   return (
     <>
       <Navbar />
@@ -22,9 +24,18 @@ function App() {
       <Results />
       <Pricing />
       <FAQ />
-      <Contact />
       <Footer />
     </>
+  )
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/book" element={<BookPage />} />
+      <Route path="/thank-you" element={<ThankYouPage />} />
+    </Routes>
   )
 }
 

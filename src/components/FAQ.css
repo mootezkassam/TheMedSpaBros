@@ -29,11 +29,15 @@
 
 .faq__item {
   border-bottom: 1px solid rgba(0,0,0,0.07);
-  transition: background 0.2s;
+  transition: background 0.3s ease;
+  border-radius: 4px;
 }
 
 .faq__item--open {
   background: var(--color-background);
+  margin: 0 -16px;
+  padding: 0 16px;
+  border-radius: 8px;
 }
 
 .faq__question {
@@ -59,13 +63,23 @@
 }
 
 .faq__icon {
-  font-size: 22px;
-  font-weight: 300;
+  font-size: 20px;
+  font-weight: 400;
   color: var(--color-secondary);
   flex-shrink: 0;
-  width: 24px;
-  text-align: center;
-  line-height: 1;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(37, 99, 235, 0.06);
+  border-radius: 6px;
+  transition: background 0.25s, transform 0.25s;
+}
+
+.faq__item--open .faq__icon {
+  background: rgba(37, 99, 235, 0.12);
+  transform: rotate(0deg);
 }
 
 .faq__answer {

@@ -34,7 +34,7 @@ const Navbar = () => {
           <a href="#results">Results</a>
           <a href="#pricing">Pricing</a>
           <a href="#faq">FAQ</a>
-          <a href="#contact" className="navbar__cta">Book Free Audit →</a>
+          <a href="/book" className="navbar__cta">Book Free Audit →</a>
         </div>
 
         {/* Hamburger */}
@@ -62,7 +62,7 @@ const Navbar = () => {
                 {href.replace('#', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
               </a>
             ))}
-            <a href="#contact" className="navbar__cta" onClick={() => setMenuOpen(false)}>
+            <a href="/book" className="navbar__cta" onClick={() => setMenuOpen(false)}>
               Book Free Audit →
             </a>
           </motion.div>

@@ -4,6 +4,8 @@
   flex-direction: column;
   justify-content: center;
   padding-top: 120px;
+  min-height: 100vh;
+  min-height: 100svh;
   position: relative;
   overflow: hidden;
 }
@@ -123,7 +125,7 @@
   background: var(--color-secondary);
   color: #fff;
   padding: 16px 32px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 16px;
   font-weight: 700;
   border: 2px solid var(--color-secondary);
@@ -131,16 +133,22 @@
   display: inline-flex;
   align-items: center;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: 0.01em;
+  position: relative;
 }
 
 .btn-primary:hover {
   background: #1d4ed8;
   border-color: #1d4ed8;
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.4), 0 4px 12px rgba(37, 99, 235, 0.2);
   opacity: 1;
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
 .hero__cta-ghost {
@@ -160,24 +168,29 @@
 /* Proof line */
 .hero__proof {
   font-size: 14px;
-  color: #888;
-  border-left: 2px solid var(--color-secondary);
-  padding-left: 14px;
-  line-height: 1.5;
+  color: #777;
+  border-left: 3px solid var(--color-secondary);
+  padding-left: 16px;
+  line-height: 1.65;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.04) 0%, transparent 100%);
+  padding: 14px 18px 14px 16px;
+  border-radius: 0 8px 8px 0;
 }
 
 .hero__proof strong {
   color: var(--color-primary);
+  font-weight: 700;
 }
 
 /* Ticker */
 .hero__ticker {
   background: var(--color-primary);
   overflow: hidden;
-  padding: 14px 0;
+  padding: 16px 0;
   white-space: nowrap;
   position: relative;
   margin-top: auto;
+  border-top: 1px solid rgba(37, 99, 235, 0.15);
 }
 
 .hero__ticker-track {
@@ -210,7 +223,7 @@
 }
 
 @media (max-width: 768px) {
-  .hero { padding-top: 100px; }
+  .hero { padding-top: 100px; min-height: auto; }
   .hero__content { padding-top: 40px; padding-bottom: 40px; }
   .hero__ctas { flex-direction: column; align-items: flex-start; }
   .btn-primary { width: 100%; justify-content: center; }

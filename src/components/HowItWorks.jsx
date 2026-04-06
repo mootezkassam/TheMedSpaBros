@@ -8,7 +8,7 @@ const steps = [
     title: 'We Audit Everything',
     body: 'Book a free 30-minute ad audit. We\'ll review your current campaigns (or lack thereof), your market, your competition, and your offer strategy. You\'ll leave with a clear picture of what\'s working, what\'s bleeding money, and exactly what we\'d do differently — whether you hire us or not.',
     cta: 'Book Your Free Audit →',
-    href: '#contact',
+    href: '/book',
   },
   {
     num: '02',

@@ -1,0 +1,607 @@
+/* ════════════════════════���══════════════
+   THANK YOU PAGE — /thank-you
+   Navy #1B2A4A · Electric Blue #2563EB
+════════════════════════════════════════ */
+
+.ty-page {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: 'Inter', 'Figtree', sans-serif;
+  background: #1B2A4A;
+}
+
+/* ── ANIMATED GRADIENT MESH ── */
+
+.ty-mesh-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1B2A4A 0%, #0f1c34 50%, #1B2A4A 100%);
+}
+
+.ty-mesh-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.45;
+  will-change: transform;
+}
+
+.ty-mesh-blob-1 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, #2563EB 0%, transparent 70%);
+  top: -10%;
+  right: -10%;
+  animation: tyMesh1 18s ease-in-out infinite;
+}
+
+.ty-mesh-blob-2 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #1e40af 0%, transparent 70%);
+  bottom: 20%;
+  left: -10%;
+  animation: tyMesh2 22s ease-in-out infinite;
+}
+
+.ty-mesh-blob-3 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #1d4ed8 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  animation: tyMesh3 20s ease-in-out infinite;
+}
+
+@keyframes tyMesh1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-60px, 80px) scale(1.1); }
+  66% { transform: translate(40px, -60px) scale(0.95); }
+}
+
+@keyframes tyMesh2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(70px, -50px) scale(1.05); }
+  66% { transform: translate(-50px, 80px) scale(1.1); }
+}
+
+@keyframes tyMesh3 {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  33% { transform: translate(-40%, -60%) scale(1.15); }
+  66% { transform: translate(-60%, -40%) scale(0.9); }
+}
+
+/* ── WAVES ── */
+
+.ty-wave-top,
+.ty-wave-bottom {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  line-height: 0;
+}
+
+.ty-wave-top svg,
+.ty-wave-bottom svg {
+  width: 100%;
+  height: 140px;
+  display: block;
+}
+
+/* ── CONFETTI ── */
+
+.ty-confetti {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.ty-confetti-piece {
+  position: absolute;
+  top: -20px;
+  opacity: 0;
+  animation-name: tyConfettiFall;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+@keyframes tyConfettiFall {
+  0% {
+    transform: translateY(0) rotate(0deg) scaleX(1);
+    opacity: 1;
+  }
+  25% {
+    transform: translateY(25vh) rotate(180deg) scaleX(0.5);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(50vh) rotate(360deg) scaleX(1);
+    opacity: 0.9;
+  }
+  75% {
+    transform: translateY(75vh) rotate(540deg) scaleX(0.5);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(105vh) rotate(720deg) scaleX(1);
+    opacity: 0;
+  }
+}
+
+/* ── CONTENT ── */
+
+.ty-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ═══════════════════════════════════════
+   HERO
+══════════���═════════════════════════════ */
+
+.ty-hero {
+  text-align: center;
+  padding: 20px 24px 48px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Checkmark */
+
+.ty-checkmark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 28px;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.08);
+  animation: tyCheckGlow 2.5s ease-in-out infinite;
+}
+
+.ty-checkmark svg {
+  width: 80px;
+  height: 80px;
+}
+
+@keyframes tyCheckGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(37, 99, 235, 0.15), 0 0 60px rgba(37, 99, 235, 0.05); }
+  50% { box-shadow: 0 0 35px rgba(37, 99, 235, 0.3), 0 0 90px rgba(37, 99, 235, 0.1); }
+}
+
+.ty-headline {
+  font-size: clamp(28px, 4.5vw, 44px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.ty-sub {
+  font-size: 17px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.ty-sub strong {
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ty-reply {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════
+   VIDEO PLACEHOLDER
+════════════════════════════════════════ */
+
+.ty-video-section {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+.ty-video-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+}
+
+.ty-video-placeholder {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, #0f1c34, #1B2A4A);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.ty-play-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+}
+
+.ty-play-btn:hover {
+  transform: scale(1.08);
+  background: #2563EB;
+  box-shadow: 0 6px 30px rgba(37, 99, 235, 0.5);
+}
+
+.ty-play-btn svg {
+  width: 28px;
+  height: 28px;
+  margin-left: 3px;
+}
+
+.ty-video-overlay {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.ty-video-caption {
+  font-size: 15px;
+  color: #2563EB;
+  font-style: italic;
+  text-align: center;
+  margin: 16px 0 0;
+  font-weight: 500;
+}
+
+/* ══════════════════��════════════════════
+   RESULTS
+═══════════════════════���════════════════ */
+
+.ty-results {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+.ty-section-title {
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.ty-results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.ty-result-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.ty-result-card h3 {
+  font-size: clamp(22px, 3vw, 28px);
+  font-weight: 800;
+  color: #1B2A4A;
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+
+.ty-result-card p {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ══════════════���════════════════════════
+   TESTIMONIALS
+═════════════════���══════════════════════ */
+
+.ty-testimonials {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+.ty-testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.ty-testimonial-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.ty-tq {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.7;
+  margin: 0 0 20px;
+  font-style: italic;
+}
+
+.ty-ta {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1B2A4A;
+  margin: 0;
+}
+
+.ty-ta span {
+  font-weight: 400;
+  color: #6b7280;
+}
+
+/* ═══════════════════════════════════════
+   FAQ
+════════════���════════════════════════��══ */
+
+.ty-faq {
+  max-width: 660px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+.ty-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ty-faq-item {
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.ty-faq-q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 20px 24px;
+  background: none;
+  border: none;
+  font-family: 'Inter', 'Figtree', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1B2A4A;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ty-faq-q:hover {
+  background: #f8fafc;
+}
+
+.ty-faq-icon {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2563EB;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ty-faq-a {
+  overflow: hidden;
+}
+
+.ty-faq-a p {
+  padding: 0 24px 20px;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════
+   BOTTOM CTA
+══════════════════════��═════════════════ */
+
+.ty-cta {
+  text-align: center;
+  padding: 60px 24px 80px;
+  max-width: 660px;
+  margin: 0 auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ty-cta-headline {
+  font-size: clamp(24px, 3.5vw, 34px);
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.ty-cta-sub {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+.ty-warning {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 16px 24px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.ty-cta-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* ── BUTTONS ── */
+
+.ty-btn-blue {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 36px;
+  background: #2563EB;
+  color: #fff;
+  font-family: 'Inter', 'Figtree', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+.ty-btn-blue:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+}
+
+.ty-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 32px;
+  background: transparent;
+  color: #fff;
+  font-family: 'Inter', 'Figtree', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.ty-btn-ghost:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+}
+
+/* ════��══════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .ty-hero {
+    padding: 16px 20px 36px;
+  }
+
+  .ty-checkmark {
+    width: 80px;
+    height: 80px;
+  }
+
+  .ty-checkmark svg {
+    width: 64px;
+    height: 64px;
+  }
+
+  .ty-results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ty-testimonial-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ty-cta-buttons {
+    flex-direction: column;
+  }
+
+  .ty-cta-buttons .ty-btn-blue,
+  .ty-cta-buttons .ty-btn-ghost {
+    width: 100%;
+  }
+
+  .ty-wave-top svg,
+  .ty-wave-bottom svg {
+    height: 80px;
+  }
+
+  .ty-video-card {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ty-headline {
+    font-size: 26px;
+  }
+
+  .ty-play-btn {
+    width: 56px;
+    height: 56px;
+  }
+
+  .ty-play-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .ty-result-card {
+    padding: 22px 18px;
+  }
+
+  .ty-testimonial-card {
+    padding: 24px;
+  }
+
+  .ty-faq-q {
+    padding: 16px 20px;
+    font-size: 14px;
+  }
+
+  .ty-faq-a p {
+    padding: 0 20px 16px;
+  }
+}

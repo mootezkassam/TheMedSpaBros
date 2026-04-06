@@ -137,7 +137,7 @@ const Pricing = () => {
                 ))}
               </ul>
 
-              <a href="#contact" className={`pricing__card-cta ${t.popular ? 'pricing__card-cta--primary' : ''}`} id={`pricing-cta-${t.id}`}>
+              <a href="/book" className={`pricing__card-cta ${t.popular ? 'pricing__card-cta--primary' : ''}`} id={`pricing-cta-${t.id}`}>
                 {t.cta}
               </a>
             </motion.div>

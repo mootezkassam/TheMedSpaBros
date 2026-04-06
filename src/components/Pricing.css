@@ -1,6 +1,34 @@
 .pricing {
   background: var(--color-background);
+  position: relative;
 }
+
+/* ── Gradient fade: white → dark navy at the very top ── */
+.pricing::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, #ffffff, transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Gradient fade: dark navy → white at the very bottom ── */
+.pricing::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to top, #ffffff, transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
 
 .pricing__label {
   font-size: 12px;

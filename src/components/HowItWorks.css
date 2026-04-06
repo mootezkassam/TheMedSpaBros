@@ -34,6 +34,7 @@
   gap: 40px;
   padding-bottom: 64px;
   position: relative;
+  cursor: default;
 }
 
 .hiw__step-left {
@@ -50,12 +51,20 @@
   background: rgba(37, 99, 235, 0.08);
   border: 1px solid rgba(37, 99, 235, 0.2);
   border-radius: 50%;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.hiw__step:hover .hiw__step-num {
+  background: var(--color-secondary);
+  color: #fff;
+  border-color: var(--color-secondary);
+  transform: scale(1.08);
 }
 
 .hiw__step-line {
@@ -94,16 +103,20 @@
   align-items: center;
   font-size: 14px;
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-secondary);
   text-decoration: none;
-  border-bottom: 2px solid var(--color-secondary);
-  padding-bottom: 2px;
-  transition: color 0.2s, border-color 0.2s;
+  background: rgba(37, 99, 235, 0.06);
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: 1px solid rgba(37, 99, 235, 0.15);
+  transition: background 0.25s, border-color 0.25s, transform 0.25s;
   letter-spacing: 0.02em;
 }
 
 .hiw__step-cta:hover {
-  color: var(--color-secondary);
+  background: rgba(37, 99, 235, 0.12);
+  border-color: rgba(37, 99, 235, 0.35);
+  transform: translateX(4px);
   opacity: 1;
 }
 

@@ -68,7 +68,7 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.45 }}
         >
-          <a href="#contact" className="btn-primary" id="hero-cta-book">
+          <a href="/book" className="btn-primary" id="hero-cta-book">
             Book Your Free Ad Audit →
           </a>
           <a href="#how-it-works" className="hero__cta-ghost" id="hero-cta-learn">

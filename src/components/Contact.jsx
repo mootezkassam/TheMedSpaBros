@@ -29,7 +29,7 @@ const MONTH_NAMES = ['January','February','March','April','May','June',
 // "Available" days — skip some for realism
 const AVAILABLE_DAYS = new Set([2,5,6,8,9,12,13,15,16,19,20,22,23,26,27,29,30]);
 
-const Contact = () => {
+const Contact = ({ onBookingComplete } = {}) => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -38,9 +38,8 @@ const Contact = () => {
   const [viewMonth, setViewMonth] = useState(today.getMonth());
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-  const [step, setStep] = useState('calendar'); // calendar | form | success
+  const [step, setStep] = useState('calendar'); // calendar | success
 
-  const [form, setForm] = useState({ name: '', medspaName: '', email: '', phone: '' });
   const [status, setStatus] = useState('idle');
 
   const calDays = getCalendarDays(viewYear, viewMonth);
@@ -67,23 +66,11 @@ const Contact = () => {
     setSelectedTime(t);
   };
 
-  const handleContinue = () => {
-    if (selectedDay && selectedTime) setStep('form');
-  };
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleContinue = async () => {
+    if (!selectedDay || !selectedTime) return;
     setStatus('sending');
 
     const payload = {
-      name: form.name,
-      medspaName: form.medspaName,
-      email: form.email,
-      phone: form.phone,
       bookedDate: `${MONTH_NAMES[viewMonth]} ${selectedDay}, ${viewYear}`,
       bookedTime: selectedTime,
     };
@@ -98,10 +85,13 @@ const Contact = () => {
         });
       }
       setStatus('success');
+      if (onBookingComplete) { onBookingComplete(); return; }
       setStep('success');
     } catch (err) {
       console.error('Webhook error:', err);
       setStatus('error');
+      if (onBookingComplete) { onBookingComplete(); return; }
+      setStep('success');
     }
   };
 
@@ -262,49 +252,6 @@ const Contact = () => {
                     Continue →
                   </motion.button>
                 )}
-              </div>
-            )}
-
-            {/* ── STEP: FORM ── */}
-            {step === 'form' && (
-              <div className="booking__body">
-                <button className="booking__back" onClick={() => setStep('calendar')}>← Back</button>
-                <div className="booking__selected-summary">
-                  <span className="booking__summary-icon">📅</span>
-                  <span>
-                    {MONTH_NAMES[viewMonth]} {selectedDay}, {viewYear} &nbsp;·&nbsp; {selectedTime}
-                  </span>
-                </div>
-                <form className="booking__form" onSubmit={handleSubmit} id="contact-form">
-                  <div className="booking__form-field">
-                    <label htmlFor="name">Your name *</label>
-                    <input type="text" id="name" name="name" value={form.name} onChange={handleChange} placeholder="First Last" required />
-                  </div>
-                  <div className="booking__form-field">
-                    <label htmlFor="medspaName">Medspa name *</label>
-                    <input type="text" id="medspaName" name="medspaName" value={form.medspaName} onChange={handleChange} placeholder="Your Medspa LLC" required />
-                  </div>
-                  <div className="booking__form-field">
-                    <label htmlFor="email">Email address *</label>
-                    <input type="email" id="email" name="email" value={form.email} onChange={handleChange} placeholder="you@yourmedspa.com" required />
-                  </div>
-                  <div className="booking__form-field">
-                    <label htmlFor="phone">Phone number *</label>
-                    <input type="tel" id="phone" name="phone" value={form.phone} onChange={handleChange} placeholder="(555) 000-0000" required />
-                  </div>
-
-                  {status === 'error' && (
-                    <p className="booking__error">Something went wrong. Please try again.</p>
-                  )}
-
-                  <button type="submit" className="booking__continue" disabled={status === 'sending'} id="contact-submit-btn">
-                    {status === 'sending' ? 'Booking...' : 'Confirm Booking →'}
-                  </button>
-
-                  <p className="booking__disclaimer">
-                    By proceeding, you agree to a free, no-obligation call with The Medspa Bros.
-                  </p>
-                </form>
               </div>
             )}
 

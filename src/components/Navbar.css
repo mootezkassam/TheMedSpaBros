@@ -58,22 +58,25 @@
   opacity: 1;
 }
 
-.navbar__cta {
+.navbar__links a.navbar__cta,
+.navbar__mobile-menu a.navbar__cta {
   background: var(--color-secondary);
-  color: #fff !important;
+  color: #fff;
   padding: 11px 22px;
-  border-radius: 4px;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.04em !important;
-  text-transform: none !important;
-  transition: background 0.3s ease, transform 0.2s ease !important;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
 }
 
-.navbar__cta:hover {
-  background: #1d4ed8 !important;
+.navbar__links a.navbar__cta:hover,
+.navbar__mobile-menu a.navbar__cta:hover {
+  background: #1d4ed8;
   transform: translateY(-1px);
-  color: #fff !important;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
 }
 
 /* Hamburger */

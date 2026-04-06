@@ -84,70 +84,71 @@ export default function PricingSection() {
       opacity: 1,
       filter: "blur(0px)",
       transition: {
-        delay: i * 0.4,
-        duration: 0.5,
+        delay: i * 0.35,
+        duration: 0.6,
+        ease: [0.4, 0, 0.2, 1],
       },
     }),
     hidden: {
-      filter: "blur(10px)",
-      y: -20,
+      filter: "blur(8px)",
+      y: -16,
       opacity: 0,
     },
   }
 
   return (
     <div
-      className="min-h-screen mx-auto relative bg-black overflow-x-hidden"
+      className="mx-auto relative overflow-x-hidden"
       ref={pricingRef}
       id="pricing"
+      style={{ background: "linear-gradient(180deg, #1B2A4A 0%, #0f1b32 100%)" }}
     >
-      {/* Sparkles grid background */}
+      {/* Top gradient fade: white → navy (seamless blend) */}
+      <div
+        className="absolute top-0 left-0 right-0 z-[60] pointer-events-none"
+        style={{
+          height: "180px",
+          background: "linear-gradient(to bottom, #ffffff 0%, rgba(255,255,255,0.85) 25%, rgba(255,255,255,0.4) 55%, rgba(255,255,255,0.1) 75%, transparent 100%)",
+        }}
+      />
+      {/* Bottom gradient fade: navy → white (seamless blend) */}
+      <div
+        className="absolute bottom-0 left-0 right-0 z-[60] pointer-events-none"
+        style={{
+          height: "180px",
+          background: "linear-gradient(to top, #ffffff 0%, rgba(255,255,255,0.85) 25%, rgba(255,255,255,0.4) 55%, rgba(255,255,255,0.1) 75%, transparent 100%)",
+        }}
+      />
+
+      {/* Sparkles — toned down */}
       <TimelineContent
         animationNum={3}
         timelineRef={pricingRef}
         customVariants={revealVariants}
-        className="absolute top-0 h-96 w-screen overflow-hidden [mask-image:radial-gradient(50%_50%,white,transparent)]"
+        className="absolute top-0 h-80 w-screen overflow-hidden [mask-image:radial-gradient(50%_50%,white,transparent)]"
       >
-        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#ffffff2c_1px,transparent_1px),linear-gradient(to_bottom,#3a3a3a01_1px,transparent_1px)] bg-[size:70px_80px]" />
         <SparklesComp
-          density={1800}
+          density={800}
           direction="bottom"
-          speed={1}
+          speed={0.6}
           color="#FFFFFF"
+          opacity={0.4}
           className="absolute inset-x-0 bottom-0 h-full w-full [mask-image:radial-gradient(50%_50%,white,transparent_85%)]"
         />
       </TimelineContent>
 
-      {/* Glow ellipse */}
-      <TimelineContent
-        animationNum={4}
-        timelineRef={pricingRef}
-        customVariants={revealVariants}
-        className="absolute left-0 top-[-114px] w-full h-[113.625vh] flex flex-col items-start justify-start content-start flex-none flex-nowrap gap-2.5 overflow-hidden p-0 z-0"
-      >
-        <div className="relative w-full h-full">
-          <div
-            className="absolute left-[-568px] right-[-568px] top-0 h-[2053px] flex-none rounded-full"
-            style={{
-              border: "200px solid #2563EB",
-              filter: "blur(92px)",
-              WebkitFilter: "blur(92px)",
-            }}
-          />
-          <div
-            className="absolute left-[-568px] right-[-568px] top-0 h-[2053px] flex-none rounded-full"
-            style={{
-              border: "200px solid #2563EB",
-              filter: "blur(92px)",
-              WebkitFilter: "blur(92px)",
-            }}
-          />
-        </div>
-      </TimelineContent>
+      {/* Subtle glow behind cards */}
+      <div
+        className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full z-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%)",
+          filter: "blur(60px)",
+        }}
+      />
 
       {/* Header */}
-      <article className="text-center mb-6 pt-32 max-w-3xl mx-auto space-y-2 relative z-50">
-        <h2 className="text-4xl font-medium text-white">
+      <article className="text-center mb-8 pt-40 max-w-3xl mx-auto space-y-3 relative z-50 px-4">
+        <h2 className="text-4xl font-bold text-white tracking-tight">
           <VerticalCutReveal
             splitBy="words"
             staggerDuration={0.15}
@@ -170,26 +171,15 @@ export default function PricingSection() {
           animationNum={0}
           timelineRef={pricingRef}
           customVariants={revealVariants}
-          className="text-gray-300 px-4"
+          className="text-[rgba(255,255,255,0.55)] text-base px-4 leading-relaxed"
         >
           Transparent pricing because we're not afraid of it. No setup fees. No
           long-term contracts. Month-to-month, cancel anytime.
         </TimelineContent>
       </article>
 
-      {/* Radial glow behind cards */}
-      <div
-        className="absolute top-0 left-[10%] right-[10%] w-[80%] h-full z-0"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at center, #2563EB 0%, transparent 70%)",
-          opacity: 0.5,
-          mixBlendMode: "multiply",
-        }}
-      />
-
       {/* Pricing cards */}
-      <div className="grid md:grid-cols-3 max-w-5xl gap-4 py-6 mx-auto px-4">
+      <div className="grid md:grid-cols-3 max-w-5xl gap-5 py-8 mx-auto px-4 relative z-10">
         {plans.map((plan, index) => (
           <TimelineContent
             key={plan.id}
@@ -200,58 +190,71 @@ export default function PricingSection() {
           >
             <Card
               className={cn(
-                "relative text-white border-neutral-800",
+                "relative text-white border transition-all duration-300",
                 plan.popular
-                  ? "bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 shadow-[0px_-13px_300px_0px_#2563EB] z-20"
-                  : "bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 z-10"
+                  ? "bg-gradient-to-b from-[#1a3a6e] via-[#162d55] to-[#0f1f3d] border-[rgba(37,99,235,0.4)] shadow-[0px_0px_120px_-20px_rgba(37,99,235,0.4)] z-20 md:scale-[1.03]"
+                  : "bg-gradient-to-b from-[#162d55] via-[#122244] to-[#0e1a36] border-[rgba(255,255,255,0.08)] z-10 hover:border-[rgba(37,99,235,0.25)]"
               )}
+              style={{ borderRadius: "16px" }}
             >
-              <CardHeader className="text-left">
+              {plan.popular && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#2563EB] text-white text-[11px] font-bold tracking-wider uppercase px-4 py-1.5 rounded-full whitespace-nowrap shadow-lg shadow-blue-900/30">
+                  Most Popular
+                </div>
+              )}
+
+              <CardHeader className="text-left pb-4">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-3xl mb-1">{plan.name}</h3>
-                    <p className="text-sm text-gray-400 italic">
+                    <h3 className="text-2xl font-bold mb-1 tracking-tight">{plan.name}</h3>
+                    <p className="text-sm text-[rgba(255,255,255,0.45)] italic">
                       {plan.tagline}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-baseline pt-2">
-                  <span className="text-4xl font-semibold">{plan.price}</span>
-                  <span className="text-gray-300 ml-1">{plan.period}</span>
+                <div className="flex items-baseline pt-3 relative">
+                  <span className="text-4xl font-extrabold tracking-tight blur-md select-none" aria-hidden="true">{plan.price}</span>
+                  <span className="text-[rgba(255,255,255,0.45)] ml-1 text-base blur-md select-none" aria-hidden="true">{plan.period}</span>
+                  <a
+                    href="/book"
+                    className="absolute inset-0 flex items-center justify-start text-xs font-semibold text-[#60a5fa] hover:text-white tracking-wide uppercase transition-colors duration-200"
+                  >
+                    Book a call to reveal
+                  </a>
                 </div>
-                <div className="text-xs text-gray-400 bg-white/5 rounded-md px-3 py-2 mt-2">
+                <div className="text-xs text-[rgba(255,255,255,0.4)] bg-white/[0.04] border border-white/[0.06] rounded-lg px-3 py-2.5 mt-3">
                   Recommended ad spend:{" "}
-                  <strong className="text-gray-200">{plan.adSpend}</strong>
+                  <strong className="text-[rgba(255,255,255,0.8)] blur-sm select-none">{plan.adSpend}</strong>
                 </div>
               </CardHeader>
 
               <CardContent className="pt-0">
                 <a
-                  href="#contact"
+                  href="/book"
                   className={cn(
-                    "block w-full mb-6 p-4 text-xl rounded-xl text-center transition-all duration-200",
+                    "block w-full mb-6 py-3.5 px-4 text-base font-bold rounded-xl text-center transition-all duration-200",
                     plan.popular
-                      ? "bg-gradient-to-t from-[#1d4ed8] to-[#2563EB] shadow-lg shadow-[#1e3a8a] border border-[#2563EB] text-white hover:brightness-110"
-                      : "bg-gradient-to-t from-neutral-950 to-neutral-600 shadow-lg shadow-neutral-900 border border-neutral-800 text-white hover:brightness-110"
+                      ? "bg-gradient-to-t from-[#1d4ed8] to-[#2563EB] shadow-lg shadow-blue-900/40 border border-[#3b82f6] text-white hover:brightness-110 hover:shadow-blue-800/50"
+                      : "bg-white/[0.06] border border-white/[0.12] text-white hover:bg-white/[0.1] hover:border-white/[0.2]"
                   )}
                 >
                   {plan.buttonText}
                 </a>
 
-                <div className="space-y-3 pt-4 border-t border-neutral-700">
+                <div className="space-y-3 pt-5 border-t border-white/[0.08]">
                   {plan.includes && (
-                    <h4 className="font-medium text-base mb-3">
+                    <h4 className="font-semibold text-sm mb-3 text-[rgba(255,255,255,0.65)]">
                       {plan.includes}
                     </h4>
                   )}
-                  <ul className="space-y-2">
+                  <ul className="space-y-2.5">
                     {plan.features.map((feature, featureIndex) => (
                       <li
                         key={featureIndex}
-                        className="flex items-center gap-2"
+                        className="flex items-start gap-2.5"
                       >
-                        <span className="h-2.5 w-2.5 bg-[#2563EB] rounded-full grid place-content-center flex-shrink-0" />
-                        <span className="text-sm text-gray-300">{feature}</span>
+                        <span className="h-1.5 w-1.5 mt-2 bg-[#2563EB] rounded-full flex-shrink-0" />
+                        <span className="text-sm text-[rgba(255,255,255,0.65)] leading-relaxed">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -264,19 +267,23 @@ export default function PricingSection() {
 
       {/* Guarantee */}
       <motion.div
-        className="max-w-5xl mx-auto px-4 pb-16 pt-8 relative z-10"
+        className="max-w-5xl mx-auto px-4 pb-24 pt-8 relative z-10"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.3 }}
       >
-        <div className="flex gap-6 items-start bg-neutral-900/80 border border-neutral-800 rounded-xl p-8 backdrop-blur-sm">
+        <div className="flex gap-5 items-start border rounded-2xl p-8" style={{
+          background: "rgba(255,255,255,0.03)",
+          borderColor: "rgba(255,255,255,0.08)",
+          backdropFilter: "blur(8px)",
+        }}>
           <span className="text-3xl flex-shrink-0">🤝</span>
           <div>
-            <strong className="text-lg font-bold text-white block mb-2">
+            <strong className="text-lg font-bold text-white block mb-2 tracking-tight">
               No contracts. No setup fees. No BS.
             </strong>
-            <p className="text-sm text-gray-400 leading-relaxed">
+            <p className="text-sm text-[rgba(255,255,255,0.5)] leading-relaxed">
               We operate month-to-month because we believe you should stay
               because we're making you money, not because a contract says you
               have to. If we're not delivering, fire us. We'll even help you
