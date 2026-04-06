@@ -251,7 +251,7 @@ export default function BookPage() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
             >
-              <div className="book-form-card" data-glow>
+              <div className="book-form-card" data-glow="light">
                 {/* Progress bar */}
                 {!disqualified && (
                   <div className="book-progress">
