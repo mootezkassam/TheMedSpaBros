@@ -122,7 +122,7 @@
 
 .book-hero {
   text-align: center;
-  padding: 100px 24px;
+  padding: 60px 24px 40px;
   max-width: 820px;
   margin: 0 auto;
 }
@@ -293,7 +293,7 @@
 .book-form-section {
   max-width: 620px;
   margin: 0 auto;
-  padding: 100px 24px;
+  padding: 40px 24px 100px;
 }
 
 /* ── WHITE CARD ── */
