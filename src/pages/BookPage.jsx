@@ -360,6 +360,9 @@ export default function BookPage() {
           )}
         </AnimatePresence>
 
+        {/* ── DIVIDER ── */}
+        <div className="book-divider" />
+
         {/* ── THE SYSTEM SECTION ── */}
         <motion.section
           className="book-system"
@@ -368,6 +371,7 @@ export default function BookPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
+          <div className="book-system-inner">
           <div className="book-system-grid">
             {/* Left: Copy */}
             <div className="book-system-left">
@@ -399,7 +403,11 @@ export default function BookPage() {
               <p className="book-system-caption">Cold traffic → Qualified patients → Booked appointments</p>
             </div>
           </div>
+          </div>
         </motion.section>
+
+        {/* ── DIVIDER ── */}
+        <div className="book-divider" />
 
         {/* ── CLIENT RESULTS DASHBOARD ── */}
         <motion.section
@@ -409,6 +417,7 @@ export default function BookPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
+          <div className="book-dashboard-inner">
           <div className="dash-section-header">
             <div className="dash-label">
               <span className="dash-dot-green" />
@@ -459,6 +468,7 @@ export default function BookPage() {
           <p className="dash-disclaimer">
             Results shown are from active client campaigns. Individual results vary based on market, budget and offer.
           </p>
+          </div>
         </motion.section>
       </div>
 
