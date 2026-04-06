@@ -21,6 +21,10 @@ export default function FunnelAnimation() {
     const ctx = canvas.getContext('2d')
     ctx.scale(dpr, dpr)
 
+    const isMobile = window.innerWidth <= 768
+    const speedMultiplier = isMobile ? 3 : 1
+    const sizeBoost = isMobile ? 0.6 : 0
+
     // Line definitions — evenly spread on left, all converge to CX,CY
     const lines = Array.from({ length: LINE_COUNT }, (_, i) => {
       const t = i / (LINE_COUNT - 1)
@@ -32,8 +36,8 @@ export default function FunnelAnimation() {
     const dots = Array.from({ length: DOT_COUNT }, () => ({
       lineIdx: Math.floor(Math.random() * LINE_COUNT),
       progress: Math.random(),
-      speed: 0.0012 + Math.random() * 0.0028,
-      size: 1.4 + Math.random() * 1.6,
+      speed: (0.0012 + Math.random() * 0.0028) * speedMultiplier,
+      size: 1.4 + Math.random() * 1.6 + sizeBoost,
       trail: [],
     }))
 

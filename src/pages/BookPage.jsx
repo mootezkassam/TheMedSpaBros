@@ -453,10 +453,10 @@ export default function BookPage() {
                 <div key={i} className="dash-row">
                   <span className="dash-cell-id">{c.id}</span>
                   <span className="dash-cell-name">{c.name}</span>
-                  <span className="dash-cell-spend">{c.spend}</span>
-                  <span className="dash-cell-revenue">{c.revenue}</span>
-                  <span className="dash-cell-roas">{c.roas}</span>
-                  <span className="dash-cell-patients">{c.patients}</span>
+                  <span className="dash-cell-spend" data-label="SPEND">{c.spend}</span>
+                  <span className="dash-cell-revenue" data-label="REVENUE">{c.revenue}</span>
+                  <span className="dash-cell-roas" data-label="ROAS">{c.roas}</span>
+                  <span className="dash-cell-patients" data-label="NEW PATIENTS">{c.patients}</span>
                   <span className={`dash-cell-status ${c.status === 'SCALING' ? 'dash-status-green' : 'dash-status-blue'}`}>
                     {c.status}
                   </span>

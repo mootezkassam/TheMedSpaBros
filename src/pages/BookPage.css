@@ -1060,12 +1060,71 @@
     padding: 20px 20px 16px;
   }
 
-  .dash-row {
-    padding: 12px 20px;
+  /* ── Mobile card layout for dashboard table ── */
+  .dash-table-wrap {
+    overflow-x: visible;
   }
 
   .dash-row-header {
-    padding: 10px 20px 6px;
+    display: none;
+  }
+
+  .dash-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0;
+    padding: 16px;
+    min-width: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .dash-row:last-child {
+    border-bottom: none;
+  }
+
+  /* Top line: ID tag + name */
+  .dash-cell-id {
+    margin-right: 10px;
+  }
+
+  .dash-cell-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    color: #d8dae2;
+  }
+
+  /* Stat rows — full width with label::before */
+  .dash-cell-spend,
+  .dash-cell-revenue,
+  .dash-cell-roas,
+  .dash-cell-patients {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0 0;
+    font-size: 13px;
+  }
+
+  .dash-cell-spend::before,
+  .dash-cell-revenue::before,
+  .dash-cell-roas::before,
+  .dash-cell-patients::before {
+    content: attr(data-label);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #5c6178;
+  }
+
+  /* Status badge — full width, centered */
+  .dash-cell-status {
+    width: 100%;
+    margin-top: 12px;
+    justify-content: center;
   }
 
   .book-trust-pills {
