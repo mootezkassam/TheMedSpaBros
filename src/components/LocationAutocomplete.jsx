@@ -28,6 +28,7 @@ async function fetchPredictions(input, sessionToken) {
           input,
           sessionToken,
           includedPrimaryTypes: ['locality', 'administrative_area_level_3'],
+          includedRegionCodes: ['us'],
         }),
       }
     )
