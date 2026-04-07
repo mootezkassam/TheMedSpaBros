@@ -163,6 +163,13 @@ export default function BookPage() {
     </motion.div>
   )
 
+  const handleEnterKey = (e) => {
+    if (e.key === 'Enter' && canGoNext()) {
+      e.preventDefault()
+      handleNext()
+    }
+  }
+
   const renderStep4 = () => (
     <motion.div key="step4" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit">
       <h3 className="book-step-title">Almost There — Where Do We Send Your Audit?</h3>
@@ -170,23 +177,23 @@ export default function BookPage() {
       <div className="book-fields-grid">
         <div className="book-field">
           <label>First Name *</label>
-          <input type="text" className="book-input" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+          <input type="text" className="book-input" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} onKeyDown={handleEnterKey} />
         </div>
         <div className="book-field">
           <label>Last Name *</label>
-          <input type="text" className="book-input" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+          <input type="text" className="book-input" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} onKeyDown={handleEnterKey} />
         </div>
         <div className="book-field">
           <label>Phone Number *</label>
-          <input type="tel" className="book-input" placeholder="(555) 123-4567" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <input type="tel" className="book-input" placeholder="(555) 123-4567" value={phone} onChange={(e) => setPhone(e.target.value)} onKeyDown={handleEnterKey} />
         </div>
         <div className="book-field">
           <label>Email *</label>
-          <input type="email" className="book-input" placeholder="you@medspa.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input type="email" className="book-input" placeholder="you@medspa.com" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={handleEnterKey} />
         </div>
         <div className="book-field book-field-full">
           <label>MedSpa / Clinic Name *</label>
-          <input type="text" className="book-input" placeholder="Your MedSpa Name" value={medspaName} onChange={(e) => setMedspaName(e.target.value)} />
+          <input type="text" className="book-input" placeholder="Your MedSpa Name" value={medspaName} onChange={(e) => setMedspaName(e.target.value)} onKeyDown={handleEnterKey} />
         </div>
       </div>
     </motion.div>
