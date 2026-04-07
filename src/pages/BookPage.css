@@ -342,7 +342,53 @@
 
 .book-step-content {
   min-height: 260px;
+  overflow: visible;
+}
+
+/* ── GOOGLE PLACES AUTOCOMPLETE DROPDOWN ── */
+.pac-container {
+  z-index: 100000 !important;
+  background: #ffffff;
+  border: 1.5px solid rgba(37, 99, 235, 0.25);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(27, 42, 74, 0.18);
+  margin-top: 6px;
+  font-family: 'Inter', 'Figtree', sans-serif;
   overflow: hidden;
+  padding: 6px 0;
+}
+
+.pac-item {
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #1B2A4A;
+  border-top: none;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.pac-item:hover,
+.pac-item-selected {
+  background: #eff6ff;
+}
+
+.pac-item-query {
+  font-size: 14px;
+  color: #1B2A4A;
+  font-weight: 600;
+}
+
+.pac-matched {
+  color: #2563EB;
+  font-weight: 700;
+}
+
+.pac-icon {
+  display: none;
+}
+
+.hdpi.pac-logo::after {
+  display: none;
 }
 
 /* ── LOCATION MAP PREVIEW ── */
