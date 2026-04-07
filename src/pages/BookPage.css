@@ -546,7 +546,7 @@
   padding: 14px 18px;
   border: 1.5px solid #e5e7eb;
   border-radius: 12px;
-  font-size: 15px;
+  font-size: 16px; /* must be >= 16px to prevent iOS Safari focus auto-zoom */
   font-family: 'Inter', 'Figtree', sans-serif;
   color: #1B2A4A;
   background: #fff;
