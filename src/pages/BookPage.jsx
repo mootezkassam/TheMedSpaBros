@@ -90,9 +90,16 @@ export default function BookPage() {
     }
   }, [stage])
 
-  // When step changes, scroll the form card back into view. iOS Safari often
-  // leaves the viewport offset after the keyboard closes, so this realigns it.
+  // When step changes (after the initial render), scroll the form card back
+  // into view. iOS Safari often leaves the viewport offset after the keyboard
+  // closes, so this realigns it. We skip the very first render so the page
+  // opens at the hero, not the form.
+  const didMountRef = useRef(false)
   useEffect(() => {
+    if (!didMountRef.current) {
+      didMountRef.current = true
+      return
+    }
     if (stage !== 'form' || !formCardRef.current) return
     formCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [step, stage])
