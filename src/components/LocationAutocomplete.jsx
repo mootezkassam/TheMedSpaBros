@@ -97,6 +97,7 @@ export default function LocationAutocomplete({
   const [showSuggestions, setShowSuggestions] = useState(false)
   const sessionTokenRef = useRef(makeSessionToken())
   const debounceRef = useRef(null)
+  const inputRef = useRef(null)
 
   // Fallback if no API key configured
   if (!API_KEY) {
@@ -154,6 +155,9 @@ export default function LocationAutocomplete({
     onPlaceSelect?.(place)
     setShowSuggestions(false)
 
+    // Dismiss the mobile keyboard once a city is picked
+    inputRef.current?.blur()
+
     // New session token after each successful selection
     sessionTokenRef.current = makeSessionToken()
   }
@@ -162,6 +166,7 @@ export default function LocationAutocomplete({
     <>
       <div className="book-autocomplete-wrap">
         <input
+          ref={inputRef}
           type="text"
           className="book-input"
           placeholder="City, State (e.g. Miami, FL)"
