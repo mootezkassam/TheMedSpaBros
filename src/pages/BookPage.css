@@ -309,9 +309,11 @@
 }
 
 /* Override [data-glow] > *:not(.glow-ring) { z-index: 1 } from spotlight-card.css
-   so the autocomplete dropdown can overlay the form-actions buttons below. */
+   so the autocomplete dropdown can overlay the form-actions buttons below.
+   z-index must exceed .glow-ring's 9999 so the dropdown sits above the card's
+   animated border seam. */
 [data-glow].book-form-card > .book-step-content {
-  z-index: 50;
+  z-index: 10000;
 }
 [data-glow].book-form-card > .book-form-actions {
   z-index: 1;
