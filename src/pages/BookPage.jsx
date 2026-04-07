@@ -81,11 +81,21 @@ export default function BookPage() {
   const emailRef = useRef(null)
   const medspaNameRef = useRef(null)
 
+  // Ref to the form card so we can scroll it back into view between steps
+  const formCardRef = useRef(null)
+
   useEffect(() => {
     if (stage === 'calendar') {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }, [stage])
+
+  // When step changes, scroll the form card back into view. iOS Safari often
+  // leaves the viewport offset after the keyboard closes, so this realigns it.
+  useEffect(() => {
+    if (stage !== 'form' || !formCardRef.current) return
+    formCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [step, stage])
 
   const setStep = (newStep) => {
     const dir = newStep > step ? 1 : -1
@@ -272,7 +282,7 @@ export default function BookPage() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
             >
-              <div className="book-form-card" data-glow="light">
+              <div ref={formCardRef} className="book-form-card" data-glow="light">
                 {/* Progress bar */}
                 {!disqualified && (
                   <div className="book-progress">
