@@ -201,28 +201,41 @@ export default function BookPage() {
     <motion.div key="step4" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit">
       <h3 className="book-step-title">Almost There — Where Do We Send Your Audit?</h3>
       <p className="book-step-subtitle">We review your market before the call so we come fully prepared.</p>
-      <div className="book-fields-grid">
+      <form
+        className="book-fields-grid"
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (canGoNext()) handleNext()
+        }}
+        // method="post" + action keeps iOS/Android password managers happy and
+        // makes the inputs eligible for one-tap contact autofill
+        method="post"
+        action="#"
+        autoComplete="on"
+      >
         <div className="book-field">
-          <label>First Name *</label>
-          <input ref={firstNameRef} type="text" className="book-input" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} onKeyDown={focusNext(lastNameRef)} enterKeyHint="next" autoComplete="given-name" />
+          <label htmlFor="book-firstName">First Name *</label>
+          <input id="book-firstName" name="given-name" ref={firstNameRef} type="text" className="book-input" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} onKeyDown={focusNext(lastNameRef)} enterKeyHint="next" autoComplete="given-name" />
         </div>
         <div className="book-field">
-          <label>Last Name *</label>
-          <input ref={lastNameRef} type="text" className="book-input" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} onKeyDown={focusNext(phoneRef)} enterKeyHint="next" autoComplete="family-name" />
+          <label htmlFor="book-lastName">Last Name *</label>
+          <input id="book-lastName" name="family-name" ref={lastNameRef} type="text" className="book-input" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} onKeyDown={focusNext(phoneRef)} enterKeyHint="next" autoComplete="family-name" />
         </div>
         <div className="book-field">
-          <label>Phone Number *</label>
-          <input ref={phoneRef} type="tel" className="book-input" placeholder="(555) 123-4567" value={phone} onChange={(e) => setPhone(e.target.value)} onKeyDown={focusNext(emailRef)} enterKeyHint="next" autoComplete="tel" />
+          <label htmlFor="book-phone">Phone Number *</label>
+          <input id="book-phone" name="tel" ref={phoneRef} type="tel" className="book-input" placeholder="(555) 123-4567" value={phone} onChange={(e) => setPhone(e.target.value)} onKeyDown={focusNext(emailRef)} enterKeyHint="next" autoComplete="tel" inputMode="tel" />
         </div>
         <div className="book-field">
-          <label>Email *</label>
-          <input ref={emailRef} type="email" className="book-input" placeholder="you@medspa.com" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={focusNext(medspaNameRef)} enterKeyHint="next" autoComplete="email" />
+          <label htmlFor="book-email">Email *</label>
+          <input id="book-email" name="email" ref={emailRef} type="email" className="book-input" placeholder="you@medspa.com" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={focusNext(medspaNameRef)} enterKeyHint="next" autoComplete="email" inputMode="email" />
         </div>
         <div className="book-field book-field-full">
-          <label>MedSpa / Clinic Name *</label>
-          <input ref={medspaNameRef} type="text" className="book-input" placeholder="Your MedSpa Name" value={medspaName} onChange={(e) => setMedspaName(e.target.value)} onKeyDown={focusNext(null)} enterKeyHint="done" autoComplete="organization" />
+          <label htmlFor="book-medspaName">MedSpa / Clinic Name *</label>
+          <input id="book-medspaName" name="organization" ref={medspaNameRef} type="text" className="book-input" placeholder="Your MedSpa Name" value={medspaName} onChange={(e) => setMedspaName(e.target.value)} onKeyDown={focusNext(null)} enterKeyHint="done" autoComplete="organization" />
         </div>
-      </div>
+        {/* Hidden submit so Enter / "Go" key triggers onSubmit on iOS */}
+        <button type="submit" style={{ display: 'none' }} aria-hidden="true" tabIndex={-1} />
+      </form>
     </motion.div>
   )
 
