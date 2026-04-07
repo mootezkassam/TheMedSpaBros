@@ -1,139 +1,72 @@
 import { useEffect, useRef, useState } from 'react'
-import { APIProvider, useMapsLibrary } from '@vis.gl/react-google-maps'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MapPin } from 'lucide-react'
 import { Map, MapMarker, MarkerContent, useMap } from './ui/map'
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 
-/* ── Custom autocomplete using AutocompleteService + custom dropdown ── */
-function AutocompleteInput({ value, onChange, onPlaceSelect, onKeyDown }) {
-  const places = useMapsLibrary('places')
-  const [suggestions, setSuggestions] = useState([])
-  const [showSuggestions, setShowSuggestions] = useState(false)
-  const autocompleteService = useRef(null)
-  const placesService = useRef(null)
-  const sessionToken = useRef(null)
-
-  useEffect(() => {
-    if (!places) return
-    autocompleteService.current = new places.AutocompleteService()
-    placesService.current = new places.PlacesService(document.createElement('div'))
-    sessionToken.current = new places.AutocompleteSessionToken()
-  }, [places])
-
-  const handleChange = (e) => {
-    const input = e.target.value
-    onChange(input)
-
-    if (!input || !autocompleteService.current) {
-      setSuggestions([])
-      setShowSuggestions(false)
-      return
-    }
-
-    autocompleteService.current.getPlacePredictions(
-      {
-        input,
-        types: ['(cities)'],
-        sessionToken: sessionToken.current,
-      },
-      (predictions, status) => {
-        if (
-          status === places.PlacesServiceStatus.OK &&
-          predictions &&
-          predictions.length > 0
-        ) {
-          setSuggestions(predictions)
-          setShowSuggestions(true)
-        } else {
-          setSuggestions([])
-          setShowSuggestions(false)
-        }
-      }
-    )
+/* ── Generate a session token (one per autocomplete session) ── */
+function makeSessionToken() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID()
   }
-
-  const handleSelect = (prediction) => {
-    if (!placesService.current) return
-
-    placesService.current.getDetails(
-      {
-        placeId: prediction.place_id,
-        fields: ['formatted_address', 'geometry', 'name'],
-        sessionToken: sessionToken.current,
-      },
-      (place, status) => {
-        if (
-          status === places.PlacesServiceStatus.OK &&
-          place?.geometry?.location
-        ) {
-          const formatted = place.formatted_address || prediction.description
-          onChange(formatted)
-          onPlaceSelect({
-            address: formatted,
-            lng: place.geometry.location.lng(),
-            lat: place.geometry.location.lat(),
-          })
-          setShowSuggestions(false)
-          // New session token after each selection
-          sessionToken.current = new places.AutocompleteSessionToken()
-        }
-      }
-    )
-  }
-
-  return (
-    <div className="book-autocomplete-wrap">
-      <input
-        type="text"
-        className="book-input"
-        placeholder="City, State (e.g. Miami, FL)"
-        value={value}
-        onChange={handleChange}
-        onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-        onBlur={() => setTimeout(() => setShowSuggestions(false), 180)}
-        onKeyDown={onKeyDown}
-        autoComplete="off"
-      />
-      <AnimatePresence>
-        {showSuggestions && suggestions.length > 0 && (
-          <motion.div
-            className="book-suggestions"
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.15 }}
-          >
-            {suggestions.map((s) => (
-              <button
-                key={s.place_id}
-                type="button"
-                className="book-suggestion-item"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => handleSelect(s)}
-              >
-                <MapPin size={16} className="book-suggestion-icon" />
-                <span className="book-suggestion-text">
-                  <span className="book-suggestion-main">
-                    {s.structured_formatting?.main_text || s.description}
-                  </span>
-                  {s.structured_formatting?.secondary_text && (
-                    <span className="book-suggestion-sub">
-                      {s.structured_formatting.secondary_text}
-                    </span>
-                  )}
-                </span>
-              </button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  )
+  return Math.random().toString(36).slice(2) + Date.now().toString(36)
 }
 
-/* ── Inner map controller that flies to the selected location ── */
+/* ── REST: get autocomplete predictions ── */
+async function fetchPredictions(input, sessionToken) {
+  try {
+    const res = await fetch(
+      'https://places.googleapis.com/v1/places:autocomplete',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': API_KEY,
+        },
+        body: JSON.stringify({
+          input,
+          sessionToken,
+          includedPrimaryTypes: ['locality', 'administrative_area_level_3'],
+        }),
+      }
+    )
+    if (!res.ok) {
+      console.error('[Places autocomplete] error:', res.status, await res.text())
+      return []
+    }
+    const data = await res.json()
+    return data.suggestions || []
+  } catch (err) {
+    console.error('[Places autocomplete] fetch failed:', err)
+    return []
+  }
+}
+
+/* ── REST: get place details (coordinates) ── */
+async function fetchPlaceDetails(placeId, sessionToken) {
+  try {
+    const res = await fetch(
+      `https://places.googleapis.com/v1/places/${placeId}?sessionToken=${sessionToken}`,
+      {
+        headers: {
+          'X-Goog-Api-Key': API_KEY,
+          'X-Goog-FieldMask': 'formattedAddress,location,displayName',
+        },
+      }
+    )
+    if (!res.ok) {
+      console.error('[Place details] error:', res.status, await res.text())
+      return null
+    }
+    return res.json()
+  } catch (err) {
+    console.error('[Place details] fetch failed:', err)
+    return null
+  }
+}
+
+/* ── Inner map controller — flies to selected location ── */
 function MapFlyTo({ lng, lat }) {
   const { map, isLoaded } = useMap()
 
@@ -159,12 +92,12 @@ export default function LocationAutocomplete({
   onKeyDown,
 }) {
   const [internalPlace, setInternalPlace] = useState(selectedPlace || null)
+  const [suggestions, setSuggestions] = useState([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const sessionTokenRef = useRef(makeSessionToken())
+  const debounceRef = useRef(null)
 
-  const handleSelect = (place) => {
-    setInternalPlace(place)
-    onPlaceSelect?.(place)
-  }
-
+  // Fallback if no API key configured
   if (!API_KEY) {
     return (
       <input
@@ -178,14 +111,105 @@ export default function LocationAutocomplete({
     )
   }
 
+  const handleChange = (e) => {
+    const input = e.target.value
+    onChange(input)
+
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+
+    if (!input || input.length < 2) {
+      setSuggestions([])
+      setShowSuggestions(false)
+      return
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      const results = await fetchPredictions(input, sessionTokenRef.current)
+      setSuggestions(results)
+      setShowSuggestions(results.length > 0)
+    }, 200)
+  }
+
+  const handleSelect = async (suggestion) => {
+    const placePred = suggestion.placePrediction
+    if (!placePred) return
+
+    const details = await fetchPlaceDetails(
+      placePred.placeId,
+      sessionTokenRef.current
+    )
+
+    if (!details?.location) return
+
+    const formatted = details.formattedAddress || placePred.text?.text || ''
+    const place = {
+      address: formatted,
+      lng: details.location.longitude,
+      lat: details.location.latitude,
+    }
+
+    onChange(formatted)
+    setInternalPlace(place)
+    onPlaceSelect?.(place)
+    setShowSuggestions(false)
+
+    // New session token after each successful selection
+    sessionTokenRef.current = makeSessionToken()
+  }
+
   return (
-    <APIProvider apiKey={API_KEY} libraries={['places']}>
-      <AutocompleteInput
-        value={value}
-        onChange={onChange}
-        onPlaceSelect={handleSelect}
-        onKeyDown={onKeyDown}
-      />
+    <>
+      <div className="book-autocomplete-wrap">
+        <input
+          type="text"
+          className="book-input"
+          placeholder="City, State (e.g. Miami, FL)"
+          value={value}
+          onChange={handleChange}
+          onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 180)}
+          onKeyDown={onKeyDown}
+          autoComplete="off"
+        />
+        <AnimatePresence>
+          {showSuggestions && suggestions.length > 0 && (
+            <motion.div
+              className="book-suggestions"
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.15 }}
+            >
+              {suggestions.map((s, i) => {
+                const pred = s.placePrediction
+                if (!pred) return null
+                const main =
+                  pred.structuredFormat?.mainText?.text ||
+                  pred.text?.text ||
+                  ''
+                const sub = pred.structuredFormat?.secondaryText?.text || ''
+                return (
+                  <button
+                    key={pred.placeId || i}
+                    type="button"
+                    className="book-suggestion-item"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => handleSelect(s)}
+                  >
+                    <MapPin size={16} className="book-suggestion-icon" />
+                    <span className="book-suggestion-text">
+                      <span className="book-suggestion-main">{main}</span>
+                      {sub && (
+                        <span className="book-suggestion-sub">{sub}</span>
+                      )}
+                    </span>
+                  </button>
+                )
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       <AnimatePresence>
         {internalPlace && (
@@ -213,7 +237,8 @@ export default function LocationAutocomplete({
                       style={{
                         fill: '#2563EB',
                         stroke: '#ffffff',
-                        filter: 'drop-shadow(0 2px 6px rgba(37, 99, 235, 0.45))',
+                        filter:
+                          'drop-shadow(0 2px 6px rgba(37, 99, 235, 0.45))',
                       }}
                     />
                   </MarkerContent>
@@ -226,6 +251,6 @@ export default function LocationAutocomplete({
           </motion.div>
         )}
       </AnimatePresence>
-    </APIProvider>
+    </>
   )
 }
