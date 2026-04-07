@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import Contact from '../components/Contact'
@@ -73,6 +73,13 @@ export default function BookPage() {
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [medspaName, setMedspaName] = useState('')
+
+  // Refs for Enter-key field-to-field navigation on step 4
+  const firstNameRef = useRef(null)
+  const lastNameRef = useRef(null)
+  const phoneRef = useRef(null)
+  const emailRef = useRef(null)
+  const medspaNameRef = useRef(null)
 
   useEffect(() => {
     if (stage === 'calendar') {
@@ -163,9 +170,12 @@ export default function BookPage() {
     </motion.div>
   )
 
-  const handleEnterKey = (e) => {
-    if (e.key === 'Enter' && canGoNext()) {
-      e.preventDefault()
+  const focusNext = (nextRef) => (e) => {
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+    if (nextRef) {
+      nextRef.current?.focus()
+    } else if (canGoNext()) {
       handleNext()
     }
   }
@@ -177,23 +187,23 @@ export default function BookPage() {
       <div className="book-fields-grid">
         <div className="book-field">
           <label>First Name *</label>
-          <input type="text" className="book-input" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} onKeyDown={handleEnterKey} />
+          <input ref={firstNameRef} type="text" className="book-input" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} onKeyDown={focusNext(lastNameRef)} enterKeyHint="next" autoComplete="given-name" />
         </div>
         <div className="book-field">
           <label>Last Name *</label>
-          <input type="text" className="book-input" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} onKeyDown={handleEnterKey} />
+          <input ref={lastNameRef} type="text" className="book-input" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} onKeyDown={focusNext(phoneRef)} enterKeyHint="next" autoComplete="family-name" />
         </div>
         <div className="book-field">
           <label>Phone Number *</label>
-          <input type="tel" className="book-input" placeholder="(555) 123-4567" value={phone} onChange={(e) => setPhone(e.target.value)} onKeyDown={handleEnterKey} />
+          <input ref={phoneRef} type="tel" className="book-input" placeholder="(555) 123-4567" value={phone} onChange={(e) => setPhone(e.target.value)} onKeyDown={focusNext(emailRef)} enterKeyHint="next" autoComplete="tel" />
         </div>
         <div className="book-field">
           <label>Email *</label>
-          <input type="email" className="book-input" placeholder="you@medspa.com" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={handleEnterKey} />
+          <input ref={emailRef} type="email" className="book-input" placeholder="you@medspa.com" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={focusNext(medspaNameRef)} enterKeyHint="next" autoComplete="email" />
         </div>
         <div className="book-field book-field-full">
           <label>MedSpa / Clinic Name *</label>
-          <input type="text" className="book-input" placeholder="Your MedSpa Name" value={medspaName} onChange={(e) => setMedspaName(e.target.value)} onKeyDown={handleEnterKey} />
+          <input ref={medspaNameRef} type="text" className="book-input" placeholder="Your MedSpa Name" value={medspaName} onChange={(e) => setMedspaName(e.target.value)} onKeyDown={focusNext(null)} enterKeyHint="done" autoComplete="organization" />
         </div>
       </div>
     </motion.div>
