@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import Contact from '../components/Contact'
 import FunnelAnimation from '../components/FunnelAnimation'
+import LocationAutocomplete from '../components/LocationAutocomplete'
 import './BookPage.css'
 
 /* ── DATA ── */
@@ -65,6 +66,7 @@ export default function BookPage() {
   // Form data
   const [ownership, setOwnership] = useState('')
   const [location, setLocation] = useState('')
+  const [selectedPlace, setSelectedPlace] = useState(null)
   const [revenue, setRevenue] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -132,12 +134,14 @@ export default function BookPage() {
     <motion.div key="step2" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit">
       <h3 className="book-step-title">Where Is Your MedSpa Located?</h3>
       <p className="book-step-subtitle">We build market-specific campaigns — your city matters.</p>
-      <input
-        type="text"
-        className="book-input"
-        placeholder="City, State (e.g. Miami, FL)"
+      <LocationAutocomplete
         value={location}
-        onChange={(e) => setLocation(e.target.value)}
+        onChange={setLocation}
+        selectedPlace={selectedPlace}
+        onPlaceSelect={(place) => {
+          setSelectedPlace(place)
+          setLocation(place.address)
+        }}
         onKeyDown={(e) => e.key === 'Enter' && canGoNext() && handleNext()}
       />
     </motion.div>
