@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import './ThankYouPage.css'
@@ -51,6 +51,12 @@ const faqs = [
 
 export default function ThankYouPage() {
   const [openFaq, setOpenFaq] = useState(null)
+
+  // Land at the top of the page on navigation (default browser behavior keeps
+  // the previous scroll offset on SPA route changes)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' })
+  }, [])
 
   const confettiPieces = useMemo(() => {
     const colors = ['#2563EB', '#1B2A4A', '#60a5fa', '#93c5fd', '#dbeafe']
@@ -138,40 +144,9 @@ export default function ThankYouPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.5 }}
           >
-            <strong>LAST STEP:</strong> Watch this quick 2-minute video so you know exactly what to expect on the call
-          </motion.p>
-
-          <motion.p
-            className="ty-reply"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.5 }}
-          >
-            (Reply YES to the text we just sent you to confirm your spot)
+            <strong>LAST STEP:</strong> Reply <strong>YES</strong> to the text we just sent you to confirm your spot.
           </motion.p>
         </section>
-
-        {/* ═══════ VIDEO PLACEHOLDER ═══════ */}
-        <motion.section
-          className="ty-video-section"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.1, duration: 0.5 }}
-        >
-          <div className="ty-video-card">
-            <div className="ty-video-placeholder">
-              <div className="ty-play-btn">
-                <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </div>
-              <p className="ty-video-overlay">Your Video Is Playing — Click To Unmute</p>
-            </div>
-            <p className="ty-video-caption">
-              This video explains exactly how we fill your medspa schedule in 30 days
-            </p>
-          </div>
-        </motion.section>
 
         {/* ═══════ RESULTS ═══════ */}
         <section className="ty-results">
