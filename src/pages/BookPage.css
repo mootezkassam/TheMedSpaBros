@@ -343,6 +343,8 @@
 .book-step-content {
   min-height: 260px;
   overflow: visible;
+  position: relative;
+  z-index: 10;
 }
 
 /* ── CUSTOM PLACES AUTOCOMPLETE DROPDOWN ── */
