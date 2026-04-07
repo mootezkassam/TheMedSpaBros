@@ -357,7 +357,9 @@ export default function BookPage() {
               </div>
 
               {/* Existing Contact component from homepage */}
-              <Contact onBookingComplete={() => navigate('/thank-you')} />
+              <div className="book-contact-wrap">
+                <Contact onBookingComplete={() => navigate('/thank-you')} />
+              </div>
 
               {/* Trust pills below calendar */}
               <div className="book-below-calendar">

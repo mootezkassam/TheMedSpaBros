@@ -1316,6 +1316,35 @@
   .book-below-calendar {
     padding: 32px 20px 16px;
   }
+
+  /* ── COMPACT CALENDAR STAGE ON MOBILE ──
+     The Contact component's left-copy block is hidden because BookPage already
+     has its own intro ("Pick Your Audit Time"). The calendar should be the
+     focus of the screen on mobile. */
+  .book-calendar-intro {
+    padding: 24px 20px 12px;
+  }
+
+  .book-calendar-intro h2 {
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+
+  .book-calendar-intro p {
+    font-size: 13px;
+  }
+
+  .book-contact-wrap .contact.section-padding {
+    padding: 8px 0 24px;
+  }
+
+  .book-contact-wrap .contact__left {
+    display: none;
+  }
+
+  .book-contact-wrap .contact__grid {
+    gap: 0;
+  }
 }
 
 @media (max-width: 480px) {
