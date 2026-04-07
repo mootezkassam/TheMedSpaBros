@@ -308,6 +308,15 @@
   border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
+/* Override [data-glow] > *:not(.glow-ring) { z-index: 1 } from spotlight-card.css
+   so the autocomplete dropdown can overlay the form-actions buttons below. */
+[data-glow].book-form-card > .book-step-content {
+  z-index: 50;
+}
+[data-glow].book-form-card > .book-form-actions {
+  z-index: 1;
+}
+
 /* ── PROGRESS BAR ── */
 
 .book-progress {
@@ -343,8 +352,6 @@
 .book-step-content {
   min-height: 260px;
   overflow: visible;
-  position: relative;
-  z-index: 10;
 }
 
 /* ── CUSTOM PLACES AUTOCOMPLETE DROPDOWN ── */
